@@ -1,0 +1,17 @@
+import {challengeAircraft,addFloats} from './challenge-aircraft.js?v=04.3';
+import {aerobaticAircraft} from './aerobatic.js?v=04.3';
+import{extraAircraft}from './extra-aircraft.js?v=04.3';
+import{jetAircraft}from './jets.js?v=04.3';
+import{C152}from './fleet.js?v=04.3';
+import * as T from './three.js';import{box,material}from './scene.js?v=04.3';
+function cessna(){let g=new T.Group();const white='#f4ecd8',purple='#6a659e';let body=new T.Mesh(new T.CylinderGeometry(.13,.64,5.6,7),material(white));body.rotation.x=Math.PI/2;body.position.set(0,.32,.3);g.add(body);box(g,0,.3,-2.25,1.25,.85,1.2,white);box(g,0,.38,-2.86,1.27,.18,.05,purple);let cabin=box(g,0,.95,-.6,1.32,1.14,1.6,'#477880');box(g,0,1.55,-.6,1.5,.14,1.9,white);box(g,0,.45,-.45,1.38,.26,2.1,purple);// Split the wing and painted tips into adjoining sections: overlapping undersides flickered.
+ box(g,0,1.52,-.35,8.7,.17,1.5,white);for(let x of [-4.725,4.725])box(g,x,1.52,-.35,.75,.17,1.5,purple);
+ function rod(a,b,r,col){let d=new T.Vector3().subVectors(b,a);let m=new T.Mesh(new T.CylinderGeometry(r,r,d.length(),6),material(col));m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());g.add(m);}
+ for(let s of [-1,1]){rod(new T.Vector3(s*.5,.2,-.1),new T.Vector3(s*3.5,1.45,-.2),.035,white);rod(new T.Vector3(s*.4,0,.1),new T.Vector3(s*1.1,-.75,.3),.065,purple);}rod(new T.Vector3(0,0,-2),new T.Vector3(0,-.8,-2),.06,white);
+ let wheels=[];for(let[x,z]of[[-1.1,.3],[1.1,.3],[0,-2]]){let w=new T.Mesh(new T.CylinderGeometry(.28,.28,.18,12),material('#2d343c'));w.rotation.z=Math.PI/2;w.position.set(x,-.9,z);g.add(w);wheels.push(w);}
+ box(g,0,.6,2.5,3.8,.12,.8,white);let fin=box(g,0,1.25,2.5,.12,1.4,.9,purple);fin.rotation.x=-.2;let rudder=box(g,0,1.25,3,.1,1.1,.35,white);let elevator=box(g,0,.61,3,3.7,.1,.38,purple);let ailerons=[box(g,-3.5,1.52,.5,2.5,.1,.35,purple),box(g,3.5,1.52,.5,2.5,.1,.35,purple)];let prop=new T.Group();prop.position.set(0,.3,-2.96);box(prop,0,0,0,.12,2.25,.08,'#353b43');box(prop,0,0,0,2.25,.12,.08,'#353b43');g.add(prop);let spinner=new T.Mesh(new T.ConeGeometry(.23,.4,10),material(purple));spinner.rotation.x=-Math.PI/2;spinner.position.set(0,.3,-3.15);g.add(spinner);
+ let cv=document.createElement('canvas');cv.width=512;cv.height=128;let ctx=cv.getContext('2d');ctx.fillStyle=purple;ctx.font='bold italic 72px sans-serif';ctx.fillText('SUPERFLY',10,90);let decal=new T.Mesh(new T.PlaneGeometry(2.5,.65),new T.MeshBasicMaterial({map:new T.CanvasTexture(cv),transparent:true,side:T.FrontSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}));decal.rotation.x=-Math.PI/2;decal.position.set(-2,1.62,-.35);g.add(decal);
+ g.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transparent;o.receiveShadow=!o.material.transparent;}});
+ return{mesh:g,update(f,u,dt){prop.rotation.z+=dt*(15+f.throttle*90);ailerons[0].rotation.x=u.roll*.35;ailerons[1].rotation.x=-u.roll*.35;elevator.rotation.x=-u.pitch*.4;rudder.rotation.y=-u.yaw*.4;wheels.forEach(w=>w.rotation.x+=f.speed*dt/.28);}};}
+
+export function aircraft(config=C152){return ['caravan','ask21','bell412'].includes(config.id)?challengeAircraft(config):config.floats?addFloats(cessna()):config.aerobatic?aerobaticAircraft():config.id==='cessna'?cessna():['boeing','executive','fighter','naval'].includes(config.id)?jetAircraft(config):extraAircraft(config);}
