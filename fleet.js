@@ -30,3 +30,6 @@ FLEET.push(
  {...C152,id:'ask21',name:'Schleicher ASK 21',short:'ASK 21',glider:true,engine:'glider',thrust:0,mass:580,wing:17.95,halfSpan:8.5,length:8.35,gear:.6,drag:.013,induced:.025,flapDrag:.06,rotationSpeed:19,approachSpeed:25,cameraDistance:26,description:'Planador tandem · Reboque e voo sem motor'},
  {...FLEET.find(c=>c.id==='bell407'),id:'bell412',name:'Bell 412',short:'BELL 412',mass:4800,gear:1.8,length:13,halfSpan:7,heliSpeed:32,cameraDistance:35,description:'Utilitário bimotor · Quatro pás · Guincho de resgate'}
 );
+
+export const FLEET_NAMES={cessna:'Brisa',boeing:'Horizon',executive:'Velar',fighter:'Vetor',skycourier:'Atlas',r22:'Libélula',bell47:'Bolha',naval:'Corsário',h145:'Nimbo',bell407:'Vento',aerobatic:'Faísca','c152-floats':'Maré',caravan:'Caravana',ask21:'Pluma',bell412:'Guardião'};
+for(const c of FLEET){c.referenceName=c.name;c.name='Superfly '+FLEET_NAMES[c.id];c.short=c.name.toUpperCase();}

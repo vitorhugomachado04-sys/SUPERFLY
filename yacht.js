@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {airportById} from './airports.js?v=04.3';
+import {airportById} from './airports.js?v=04.9';
 export function buildYacht(scene,world){
  const a=airportById('yacht'),g=new T.Group();g.name='Panorama · superyacht';g.position.set(a.x,0,a.z-55);scene.add(g);const mats=new Map();
  const mat=color=>{if(!mats.has(color))mats.set(color,new T.MeshStandardMaterial({color,roughness:.35,metalness:.18}));return mats.get(color);};
@@ -25,7 +25,7 @@ export function buildYacht(scene,world){
  for(const x of [-12,12])for(const z of [14,23,32]){box(x,10.7,z,3,.8,5,'#f2ead5');const back=box(x,11.4,z-1.8,3,.25,2.5,'#e1d1ad');back.rotation.x=-.45;}
  // Landing deck 32 × 32 m: no furniture or railings inside its clear envelope.
  box(0,9.8,55,36,.4,36,'#7e9490');
- const ring=mesh(new T.TorusGeometry(12,.13,6,64),'#f3e8bb',0,10.08,55);ring.rotation.x=Math.PI/2;
+ const ring=mesh(new T.TorusGeometry(12,.13,6,64),'#f3e8bb',0,10.2,55);ring.rotation.x=Math.PI/2;
  for(const x of [-3,3])box(x,10.08,55,.8,.08,10,'#f3e8bb');box(0,10.08,55,6,.08,.8,'#f3e8bb');
  for(const x of [-17,17])for(const z of [39,55,71]){const lamp=mesh(new T.SphereGeometry(.25,8,6),'#ccefd2',x,10.4,z);world.nightLights.push(lamp);}
  for(const side of [-1,1]){

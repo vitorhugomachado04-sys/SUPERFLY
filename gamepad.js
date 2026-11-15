@@ -5,7 +5,7 @@ export const deadzone=(v,d=.16)=>Number.isFinite(v)&&Math.abs(v)>d?Math.sign(v)*
 const empty=()=>({pitch:0,roll:0,yaw:0,power:0,gun:false,missile:false,actionDown:false,brake:false,lookX:0,lookY:0,trim:0,trimReset:false});
 const presses=[['context',0],['gear',2],['camera',3],['restart',8],['pause',9],['missile',11],['flap',12],['hook',13],['smoke',14],['map',15]];
 export class GamepadInput{
- constructor({getPads=()=>navigator.getGamepads?.()||[],dispatch=()=>{},disconnect=()=>{}}={}){this.getPads=getPads;this.dispatch=dispatch;this.disconnect=disconnect;this.index=null;this.previous=[];this.ready=false;this.family='generic';this.connected=false;this.unsupported=false;this.repeat=0;this.direction=null;}
+ constructor({getPads=()=>navigator.getGamepads?.()||[],dispatch=()=>{},disconnect=()=>{}}={}){this.getPads=getPads;this.dispatch=dispatch;this.disconnect=disconnect;this.index=null;this.previous=[];this.ready=false;this.lookMode=false;this.family='generic';this.connected=false;this.unsupported=false;this.repeat=0;this.direction=null;}
  poll(dt,state={}){
   let all;try{all=Array.from(this.getPads()||[]).filter(p=>p?.connected!==false&&p);}catch{all=[];}
   const supported=all.filter(p=>p.mapping==='standard');this.unsupported=!!all.length&&!supported.length;
@@ -20,18 +20,24 @@ export class GamepadInput{
   if(!this.ready){this.previous=now;this._before=now.slice();if(!now.some(Boolean)&&ax.every(v=>v===0))this.ready=true;return empty();}
   const before=this._before||[];this._before=now.slice();const rose=i=>now[i]&&!before[i];
   if(changed)this._before=now.slice();
-  if(state.menu){
-   const direction=down(12)||ax[1]<-.55?'up':down(13)||ax[1]>.55?'down':down(14)||ax[0]<-.55?'left':down(15)||ax[0]>.55?'right':null;
-   this.repeat-=dt;if(direction&&(direction!==this.direction||this.repeat<=0)){this.dispatch('navigate',direction);this.repeat=direction===this.direction ? .17 : .4;}this.direction=direction;
+  if(state.menu){this.lookMode=false;
+   let direction=down(12)||ax[1]<-.55?'up':down(13)||ax[1]>.55?'down':down(14)||ax[0]<-.55?'left':down(15)||ax[0]>.55?'right':null;
+   if(!direction&&({up:ax[1]<-.35,down:ax[1]>.35,left:ax[0]<-.35,right:ax[0]>.35})[this.direction])direction=this.direction;
+   this.repeat-=dt;if(direction&&(direction!==this.direction||this.repeat<=0)){this.dispatch('navigate',direction);this.repeat=direction===this.direction ? .24 : .45;}this.direction=direction;
    if(rose(0))this.dispatch('confirm');if(rose(1))this.dispatch('back');if(rose(9))this.dispatch('pause');return empty();
   }
-  const trimming=down(4)&&down(5);this.direction=null;for(const [action,index]of presses)if(!(trimming&&[12,13,14].includes(index))&&rose(index))this.dispatch(action);
-  return {pitch:ax[1]||0,roll:ax[0]||0,yaw:trimming?0:value(5)-value(4),trim:trimming?(+down(12)-down(13)):0,trimReset:trimming&&rose(14),power:value(7)-value(6),gun:down(10),missile:false,actionDown:down(0),brake:down(1),lookX:ax[2]||0,lookY:ax[3]||0};
+  const trimming=down(4)&&down(5);if(rose(3)&&trimming)this.dispatch('hideControls');else if(rose(3)&&down(4)){this.lookMode=!this.lookMode;this.dispatch('orbit',this.lookMode);}this.direction=null;for(const [action,index]of presses)if(!(index===3&&down(4))&&!(trimming&&[12,13,14].includes(index))&&rose(index))this.dispatch(action);
+  return {pitch:this.lookMode?0:ax[1]||0,roll:this.lookMode?0:ax[0]||0,yaw:trimming||this.lookMode?0:value(5)-value(4),trim:trimming?(+down(12)-down(13)):0,trimReset:trimming&&rose(14),power:value(7)-value(6),gun:down(10),missile:false,actionDown:down(0),brake:down(1),lookX:this.lookMode?ax[0]||0:ax[2]||0,lookY:this.lookMode?ax[1]||0:ax[3]||0};
  }
 }
+const menuFocus=new WeakMap();let lastMenu=null;
+export function syncPadMenu(){
+ const root=['options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
+ if(!root)return null;
+ if(root!==lastMenu){if(lastMenu?.contains(document.activeElement))menuFocus.set(lastMenu,document.activeElement);const saved=menuFocus.get(root);if(saved?.isConnected&&saved.getClientRects().length)saved.focus({preventScroll:true});else root.querySelector('button:not([disabled]),select:not([disabled]),input:not([disabled])')?.focus({preventScroll:true});lastMenu=root;}return root;
+}
 export function navigatePadMenu(direction){
- const root=['letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
- if(!root)return;
+ const root=syncPadMenu();if(!root)return;
  const items=[...root.querySelectorAll('button,select,input')].filter(e=>!e.disabled&&e.getClientRects().length);if(!items.length)return;
  let index=items.indexOf(document.activeElement),current=items[index];
  if((direction==='left'||direction==='right')&&current?.matches('select,input[type=range],input[type=number]')){const step=direction==='left'?-1:1;if(current.tagName==='SELECT')current.selectedIndex=Math.max(0,Math.min(current.options.length-1,current.selectedIndex+step));else current.value=Math.max(+current.min||0,Math.min(+current.max||100,+current.value+step*(+current.step||1)));current.dispatchEvent(new Event('input',{bubbles:true}));current.dispatchEvent(new Event('change',{bubbles:true}));return;}

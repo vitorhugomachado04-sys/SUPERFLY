@@ -1,6 +1,6 @@
-import {updateClouds} from './clouds.js?v=04.3';
+import {updateClouds} from './clouds.js?v=04.9';
 import * as T from './three.js';
-import {REGIONS} from './airports.js?v=04.3';
+import {REGIONS} from './airports.js?v=04.9';
 export const REGIONAL_WEATHER={aurora:'clear',winds:'coastal',metro:'partial',alpine:'overcast',peaks:'snow','aurora-snow':'blizzard',desert:'dust',ocean:'partial'};
 export const regionAt=(x,z)=>REGIONS.reduce((best,r)=>Math.hypot(x-r.x,z-r.z)<Math.hypot(x-best.x,z-best.z)?r:best).id;
 export const WEATHER={

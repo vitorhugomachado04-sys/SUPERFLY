@@ -59,10 +59,10 @@ export function oceanPlatform(scene,x,z){
  const g=new T.Group();g.position.set(x,0,z);scene.add(g);g.name='ocean-landing-platform';
  const add=(geo,color,y)=>{const m=new T.Mesh(geo,new T.MeshStandardMaterial({color,roughness:.7,metalness:.3}));m.position.y=y;m.receiveShadow=true;g.add(m);return m;};
  add(new T.CylinderGeometry(48,43,8,64),'#334c5c',3);add(new T.CylinderGeometry(42,42,1,64),'#748b8b',7.5);
- for(const radius of [38,7]){const ring=add(new T.TorusGeometry(radius,.15,6,64),'#ede2b5',8.22);ring.rotation.x=Math.PI/2;}
- for(let i=0;i<16;i++){const a=i*Math.PI/8,m=add(new T.SphereGeometry(.7,8,6),'#f0d8a1',8.5);m.position.x=Math.sin(a)*45;m.position.z=Math.cos(a)*45;}
+ for(const radius of [38,7]){const ring=add(new T.TorusGeometry(radius,.15,6,64),'#b6a4eb',8.22);ring.rotation.x=Math.PI/2;}
+ for(let i=0;i<16;i++){const a=i*Math.PI/8,m=add(new T.SphereGeometry(.7,8,6),'#75d6ac',8.5);m.position.x=Math.sin(a)*45;m.position.z=Math.cos(a)*45;}
  for(let i=0;i<24;i++){const a=i*Math.PI/12;const post=add(new T.CylinderGeometry(.15,.15,2,6),'#c3d3cf',9);post.position.set(Math.sin(a)*46,9,Math.cos(a)*46);}
  const rail=add(new T.TorusGeometry(46,.15,6,64),'#bdcecb',10);rail.rotation.x=Math.PI/2;
- for(const x of [-15,15]){const mark=add(new T.BoxGeometry(10,.1,2),'#ede2b5',8.15);mark.position.x=x;}
+ for(const x of [-15,15]){const mark=add(new T.BoxGeometry(10,.1,2),'#b6a4eb',8.15);mark.position.x=x;}
  return g;
 }

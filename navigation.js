@@ -1,16 +1,26 @@
-import {WIND_PLACES} from './winds-layout.js?v=04.3';
-import {CITY_PLACES} from './city-layout.js?v=04.3';
-import {AIRPORTS,REGIONS,airportById} from './airports.js?v=04.3';
+import {AIRPORTS,REGIONS} from './airports.js?v=04.9';
+export const GPS_COLORS={target:'#b6a4eb',focus:'#75d6ac',airport:'#b9d2cc',text:'#ecf4f2'};
+export function mapPoint(f,target,scale,limit=76){const x=(target.x-f.x)/scale,z=(target.z-f.z)/scale,d=Math.hypot(x,z),k=d>limit?limit/d:1;return{x:x*k,z:z*k,outside:d>limit,distance:d*scale};}
 export class NavigationMap{
- constructor(canvas){this.ctx=canvas.getContext('2d');this.zoom=1;this.scales=[18,70,250];}
- cycle(){this.zoom=(this.zoom+1)%3;}
- draw(f,destination,focus,special){const ctx=this.ctx,s=this.scales[this.zoom],mid=95;ctx.clearRect(0,0,190,190);ctx.save();ctx.translate(mid,mid);ctx.beginPath();ctx.arc(0,0,91,0,7);ctx.clip();ctx.fillStyle='#142b3d55';ctx.fillRect(-95,-95,190,190);
- for(const r of REGIONS){if(r.ocean)continue;ctx.fillStyle=r.color+'88';ctx.beginPath();ctx.ellipse((r.x-f.x)/s,(r.z-f.z)/s,r.rx/s,r.rz/s,0,0,7);ctx.fill();if(['alpine','peaks'].includes(r.id)){ctx.fillStyle='#54687088';for(const side of [-1,1]){const x=(r.x+side*650-f.x)/s,z=(r.z-f.z)/s;ctx.beginPath();ctx.moveTo(x-10,z+12);ctx.lineTo(x,z-14);ctx.lineTo(x+10,z+12);ctx.fill();}}}
- for(const a of AIRPORTS){const x=(a.x-f.x)/s,z=(a.z-f.z)/s;ctx.save();ctx.translate(x,z);ctx.rotate(a.heading);ctx.fillStyle=a.id===destination?.id?'#e9f296':a.id===focus?.id?'#beadff':'#fff2d6';if(a.type==='carrier'){ctx.font='bold 10px sans-serif';ctx.fillText('⚓',-4,3);}else if(a.type==='helipad'){ctx.font='bold 9px sans-serif';ctx.fillText(a.id==='stadium'?'⚽':a.id==='yacht'?'⚓':'H',-3,3);}else ctx.fillRect(-Math.max(1,a.width/s/2),-a.length/s/2,Math.max(2,a.width/s),a.length/s);ctx.restore();}
- const metro=REGIONS.find(r=>r.id==='metro');for(const [id,label]of [['park','PARQUE'],['golf','GOLFE'],['stadium','ARENA']]){const p=CITY_PLACES[id],x=(metro.x+p.x-f.x)/s,z=(metro.z+p.z-f.z)/s;if(Math.hypot(x,z)<82){ctx.fillStyle=id==='park'?'#c6e7ab':id==='golf'?'#e3edaf':'#dac6fa';ctx.fillRect(x-2,z-2,4,4);ctx.font='6px monospace';ctx.fillText(label,x+4,z+2);}}
- const winds=REGIONS.find(r=>r.id==='winds');for(const [id,label]of [['football','CAMPO'],['tennis','TÊNIS']]){const p=WIND_PLACES[id],x=(winds.x+p.x-f.x)/s,z=(winds.z+p.z-f.z)/s;if(Math.hypot(x,z)<82){ctx.fillStyle='#e2d5bb';ctx.fillRect(x-2,z-2,4,4);ctx.font='6px monospace';ctx.fillText(label,x+4,z+2);}}
- const alpine=REGIONS.find(r=>r.id==='alpine');{const x=(alpine.x+895-f.x)/s,z=(alpine.z-600-f.z)/s;if(Math.hypot(x,z)<82){ctx.fillStyle='#f2e6d0';ctx.fillRect(x-2,z-2,4,4);ctx.font='6px monospace';ctx.fillText('HOTEL · ESQUI',x+4,z+2);}}
- const marker=(target,color)=>{if(!target)return;let x=(target.x-f.x)/s,z=(target.z-f.z)/s,d=Math.hypot(x,z);if(d>80){x*=80/d;z*=80/d;}ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,z,6,0,7);ctx.stroke();};marker(destination,'#e9f296');marker(focus,'#beadff');marker(special,'#f5b887');
- ctx.save();ctx.rotate(f.heading);ctx.fillStyle='#ffffff';ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(-4,5);ctx.lineTo(0,2);ctx.lineTo(4,5);ctx.closePath();ctx.fill();ctx.restore();ctx.restore();ctx.fillStyle='#f3eed9';ctx.font='9px monospace';ctx.fillText('N ↑',89,14);ctx.fillText(`${s*100/1000} km`,10,180);
+ constructor(canvas){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.zoom=1;this.scales=[18,70,250];this.names=['LOCAL','ILHA','ARQUIPÉLAGO'];}
+ cycle(){this.zoom=(this.zoom+1)%this.scales.length;}
+ draw(f,destination,focus,special){
+ const ctx=this.ctx,s=this.scales[this.zoom],target=special||destination,C=GPS_COLORS;
+ ctx.setTransform(this.canvas.width/190,0,0,this.canvas.height/190,0,0);ctx.clearRect(0,0,190,190);ctx.fillStyle='#142a30ed';ctx.fillRect(0,0,190,190);
+ ctx.save();ctx.translate(95,95);ctx.beginPath();ctx.arc(0,0,81,0,Math.PI*2);ctx.clip();
+ // Quiet land silhouettes leave enough contrast for the route and landing points.
+ for(const r of REGIONS){if(r.ocean)continue;ctx.fillStyle='#36544f';ctx.strokeStyle='#607e73';ctx.lineWidth=.7;ctx.beginPath();ctx.ellipse((r.x-f.x)/s,(r.z-f.z)/s,r.rx/s,r.rz/s,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(this.zoom===2){const x=(r.x-f.x)/s,z=(r.z-f.z)/s+r.rz/s+7;if(Math.hypot(x,z)<72){ctx.fillStyle='#bdd6cd';ctx.font='5.5px sans-serif';ctx.textAlign='center';ctx.fillText(({aurora:'ESCOLA',winds:'VENTOS',metro:'METRÓPOLE',alpine:'ALPINA',peaks:'PICOS','aurora-snow':'AURORA',desert:'DESERTO'})[r.id]||r.name,x,z);}}}
+ ctx.strokeStyle='#d9ece519';ctx.lineWidth=.7;for(const radius of[30,60]){ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();}ctx.beginPath();ctx.moveTo(-81,0);ctx.lineTo(81,0);ctx.moveTo(0,-81);ctx.lineTo(0,81);ctx.stroke();
+ if(target){const p=mapPoint(f,target,s);ctx.strokeStyle=C.target;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(p.x,p.z);ctx.stroke();ctx.setLineDash([]);}
+ for(const a of AIRPORTS){const x=(a.x-f.x)/s,z=(a.z-f.z)/s;if(Math.hypot(x,z)>83)continue;ctx.save();ctx.translate(x,z);ctx.rotate(a.heading);ctx.fillStyle=a.id===destination?.id?C.target:a.id===focus?.id?C.focus:C.airport;
+ if(a.type==='helipad'){ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.fillText('H',0,3);}else if(a.type==='carrier'){ctx.fillRect(-2,-5,4,10);}else ctx.fillRect(-1.3,-Math.max(3,a.length/s/2),2.6,Math.max(6,a.length/s));ctx.restore();}
+ const marker=(point,color,shape)=>{if(!point)return;const p=mapPoint(f,point,s);ctx.save();ctx.translate(p.x,p.z);ctx.strokeStyle=color;ctx.fillStyle='#142a30';ctx.lineWidth=2;ctx.beginPath();
+ if(p.outside){ctx.rotate(Math.atan2(p.x,-p.z));ctx.moveTo(0,-6);ctx.lineTo(-4,4);ctx.lineTo(4,4);ctx.closePath();}else if(shape==='square'){ctx.rect(-4,-4,8,8);}else ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();};
+ marker(focus,C.focus,'square');marker(destination,C.target);if(special)marker(special,C.target);
+ ctx.save();ctx.rotate(f.heading);ctx.strokeStyle='#142a30';ctx.lineWidth=2;ctx.fillStyle='#ffffff';ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(-5,6);ctx.lineTo(0,3);ctx.lineTo(5,6);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();ctx.restore();
+ ctx.textAlign='left';ctx.font='bold 8px sans-serif';ctx.fillStyle=C.text;ctx.fillText('GPS · '+this.names[this.zoom],9,12);ctx.textAlign='right';ctx.fillStyle=C.focus;ctx.fillText('N ↑',180,12);
+ ctx.textAlign='left';ctx.font='8px sans-serif';ctx.fillStyle=C.text;
+ if(target){const d=Math.hypot(target.x-f.x,target.z-f.z),distance=d>=1000?(d/1000).toFixed(1)+' km':Math.round(d)+' m';ctx.fillStyle=C.target;ctx.fillText('● '+(special?'OBJETIVO':'DESTINO')+' · '+distance,9,181);this.canvas.setAttribute('aria-label',`GPS ${this.names[this.zoom]}, ${target.name||'objetivo'} a ${distance}`);}else{ctx.fillText('VOO LIVRE',9,181);this.canvas.setAttribute('aria-label','GPS '+this.names[this.zoom]+', norte para cima');}
+ ctx.strokeStyle=C.focus;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(141,170);ctx.lineTo(181,170);ctx.moveTo(141,167);ctx.lineTo(141,172);ctx.moveTo(181,167);ctx.lineTo(181,172);ctx.stroke();ctx.textAlign='right';ctx.fillStyle=C.focus;ctx.font='7px sans-serif';const m=s*40;ctx.fillText(m>=1000?(m/1000)+' km':m+' m',181,181);
  }
 }

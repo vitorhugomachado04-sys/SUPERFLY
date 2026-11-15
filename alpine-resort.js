@@ -1,5 +1,5 @@
-import {helicopter} from './helicopters.js?v=04.3';
-import {getAircraft} from './fleet.js?v=04.3';
+import {helicopter} from './helicopters.js?v=04.9';
+import {getAircraft} from './fleet.js?v=04.9';
 export const resortReserved=(x,z)=>x>780&&x<1190&&z>-720&&z<250;
 export function addAlpineResort({scene,world,r,item,ground,obstacle}){
  const y=1118,hx=895,hz=-600;
@@ -31,10 +31,10 @@ export function addAlpineResort({scene,world,r,item,ground,obstacle}){
   obstacle(cx,-608,31,46,y+2);
  }
  item(1005,y+.5,-658,34,.3,34,'#617b7b');
- for(const dx of [-4,4])item(1005+dx,y+.69,-658,1,.05,12,'#ece9d7');item(1005,y+.69,-658,8,.05,1,'#ece9d7');
+ for(const dx of [-4,4])item(1005+dx,y+.78,-658,1,.05,12,'#ece9d7');item(1005,y+.78,-658,8,.05,1,'#ece9d7');
  // Separate parking apron keeps the active landing pad clear.
  item(1070,y+.5,-658,19,.3,19,'#929a92');
- for(const side of [-1,1]){item(1005+side*16,y+.69,-658,.18,.06,32,'#ece9d7');item(1005,y+.69,-658+side*16,32,.06,.18,'#ece9d7');}
+ for(const side of [-1,1]){item(1005+side*16,y+.78,-658,.18,.06,32,'#ece9d7');item(1005,y+.78,-658+side*16,32,.06,.18,'#ece9d7');}
  const hc=getAircraft('bell47'),heli=helicopter(hc);heli.mesh.name='resort-parked-bell47';heli.mesh.position.set(r.x+1070,y+.7+hc.gear,r.z-658);heli.mesh.rotation.y=.55;scene.add(heli.mesh);obstacle(1070,-658,12,12,y+5);
  world.mountainResort={region:r.id,hotel:{x:r.x+895,z:r.z-600,y},pool:{x:r.x+1000,z:r.z-535,y}};
 }

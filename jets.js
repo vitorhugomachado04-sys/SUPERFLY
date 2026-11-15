@@ -46,12 +46,12 @@ export function jetAircraft(c){
  // Each wheel assembly pivots into the fuselage/wing; gear doors open in transit.
  const gears=[],doors=[],wheelRadius=c.id==='boeing'?.65:c.id==='executive'?.32:.34;
  for(const [x,z,side]of [[-c.wheelTrack,c.wheelZ,-1],[c.wheelTrack,c.wheelZ,1],[0,-c.length*.32,0]]){
-  const pivot=new T.Group();pivot.position.set(x,-c.belly*.7,z);g.add(pivot);
-  const leg=c.gear-c.belly*.7-wheelRadius;
+  const pivot=new T.Group();const pivotY=side?c.wingY:-c.belly*.7;pivot.position.set(x,pivotY,z);g.add(pivot);
+  const leg=c.gear+pivotY-wheelRadius;
   box(0,-leg/2,0,.13,leg,.13,'#adb5b4',pivot);
   const wheels=[];
   for(const offset of (c.id==='boeing'?[-.35,.35]:[0])){const w=add(new T.CylinderGeometry(wheelRadius,wheelRadius,wheelRadius*.7,12),'#29313b',offset,-leg,0,pivot);w.rotation.z=Math.PI/2;wheels.push(w);}
-  const door=box(x,-c.belly*.72,z,c.id==='boeing'?1.1:.65,.08,c.id==='boeing'?2.2:1.2,white);doors.push(door);gears.push({pivot,side,wheels});
+  const door=box(x,pivotY-.04,z,c.id==='boeing'?1.1:.65,.08,c.id==='boeing'?2.2:1.2,white);doors.push(door);gears.push({pivot,side,wheels});
  }
  const hook=new T.Group();hook.position.set(0,-.45,c.length*.32);g.add(hook);hook.visible=!!c.naval;const rod=box(0,0,1.2,.14,.14,2.4,'#d3c9a4',hook);box(0,-.12,2.35,.32,.35,.2,'#343f48',hook);
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});

@@ -1,9 +1,9 @@
-import {stepArrestor} from './carrier.js?v=04.3';
-import {airportAt,surfaceHeight,spawnAt,airportById} from './airports.js?v=04.3';
-import{terrain}from './geography.js?v=04.3';
-export{terrain}from './geography.js?v=04.3';
-import{C152}from './fleet.js?v=04.3';
-export{C152}from './fleet.js?v=04.3';
+import {stepArrestor} from './carrier.js?v=04.9';
+import {airportAt,surfaceHeight,spawnAt,airportById,helicopterDeparture} from './airports.js?v=04.9';
+import{terrain}from './geography.js?v=04.9';
+export{terrain}from './geography.js?v=04.9';
+import{C152}from './fleet.js?v=04.9';
+export{C152}from './fleet.js?v=04.9';
 export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const onRunway=(x,z)=>!!airportAt(x,z);
 export class Flight{
@@ -11,12 +11,12 @@ export class Flight{
  select(config){this.config=config;this.reset();}
  toggleGear(){if(!this.config.retractable||this.crashed||this.ground||this.y-terrain(this.x,this.z)<this.config.gear+1)return false;this.gearTarget=1-this.gearTarget;return true;}
  reset(){this.surface=null;this.crashSurface=null;this.hookTarget=0;this.hookExtension=0;this.arrest=null;this.previousHook=null;this.engineHealth=[1,1];this.isolated=false;this.gearFault=false;this.wind=null;Object.assign(this,{x:0,y:3+this.config.gear,z:680,vx:0,vy:0,vz:0,heading:0,pitch:0,bank:0,pr:0,rr:0,throttle:.08,trim:0,flaps:0,gearExtension:1,gearTarget:1,ground:true,crashed:false,airborne:false,stall:0,alpha:0,touch:null,time:0});}
- spawn(id){this.reset();this.spawnId=id;Object.assign(this,spawnAt(airportById(id),this.config));}
+ spawn(id){this.reset();const a=this.config.helicopter?helicopterDeparture(id):airportById(id);this.spawnId=a.id;Object.assign(this,spawnAt(a,this.config));}
  get speed(){return Math.hypot(this.vx,this.vy,this.vz);}
  step(dt,u){if(this.crashed)return;const c=this.config;this.time+=dt;this.hookExtension+=Math.sign(this.hookTarget-this.hookExtension)*Math.min(Math.abs(this.hookTarget-this.hookExtension),dt/1.2);
  if(c.retractable){const delta=this.gearTarget-this.gearExtension;this.gearExtension=clamp(this.gearExtension+Math.sign(delta)*Math.min(Math.abs(delta),dt/c.gearSeconds),0,this.gearFault?.55:1);}
+ this.trim=u.trimReset?0:clamp((this.trim||0)+(u.trim||0)*dt*.3,-1,1);
  if(c.helicopter){this.stepHelicopter(dt,u);return;}
-this.trim=u.trimReset?0:clamp((this.trim||0)+(u.trim||0)*dt*.3,-1,1);
 this.throttle=clamp(this.throttle+(u.power||0)*dt*.25,0,1);const wind=this.wind?.sample(this.x,this.y,this.z,this.time)||{x:0,y:0,z:0,roll:0,pitch:0};if(this.ground){wind.x=wind.y=wind.z=wind.roll=wind.pitch=0;}const avx=this.vx-wind.x,avy=this.vy-wind.y,avz=this.vz-wind.z;let v=Math.hypot(avx,avy,avz),hs=Math.hypot(avx,avz),gamma=Math.atan2(avy,Math.max(.001,hs));this.alpha=this.pitch-gamma;const eff=clamp(v/c.controlSpeed,.06,1.25);// Fade commands near the arcade attitude envelope; release assists recovery.
  const pitchInput=clamp(u.pitch,-1,1);
  const room=pitchInput>0?(c.pitchMax-this.pitch):(this.pitch-c.pitchMin);
@@ -38,7 +38,7 @@ this.throttle=clamp(this.throttle+(u.power||0)*dt*.25,0,1);const wind=this.wind?
  const lx=-tx*Math.sin(gamma)*Math.cos(this.bank)-tz*Math.sin(this.bank);
  const ly=Math.cos(gamma)*Math.cos(this.bank);
  const lz=-tz*Math.sin(gamma)*Math.cos(this.bank)+tx*Math.sin(this.bank);let ax=(fx*Math.cos(this.pitch)*thrust-avx*inv*drag+lift*lx)/c.mass;let ay=(Math.sin(this.pitch)*thrust-avy*inv*drag+lift*ly)/c.mass-c.gravity;let az=(fz*Math.cos(this.pitch)*thrust-avz*inv*drag+lift*lz)/c.mass;
- if(this.ground){let lateral=this.vx*rx+this.vz*rz;ax-=lateral*rx*9;az-=lateral*rz*9;let resistance=c.floats?(u.brake?.65:.08):(u.brake?5.8:.22);ax-=this.vx/Math.max(hs,1)*resistance;az-=this.vz/Math.max(hs,1)*resistance;}
+ if(this.ground){let lateral=this.vx*rx+this.vz*rz;ax-=lateral*rx*9;az-=lateral*rz*9;let resistance=c.floats&&(this.surface?.(this.x,this.z)?.water||terrain(this.x,this.z)<0)?(u.brake?.65:.08):(u.brake?5.8:.22);ax-=this.vx/Math.max(hs,1)*resistance;az-=this.vz/Math.max(hs,1)*resistance;}
  if(this.ground&&hs<.1&&this.throttle<=.1){this.vx=0;this.vz=0;ax=0;az=0;}this.vx+=ax*dt;this.vy+=ay*dt;this.vz+=az*dt;this.x+=this.vx*dt;this.y+=this.vy*dt;this.z+=this.vz*dt;
  for(const o of this.obstacles||[]){if(Math.abs(this.x-o.x)<o.w/2+1&&Math.abs(this.z-o.z)<o.d/2+2&&this.y<o.top+1){this.crashed=true;this.reason='Colisão com uma construção';return;}}
  const custom=this.surface?.(this.x,this.z),landing=custom?.airport||airportAt(this.x,this.z),slope=landing?.slope||0,groundHeight=custom?.height??terrain(this.x,this.z),floor=groundHeight+Math.max(c.belly,c.gear*this.gearExtension);
@@ -66,10 +66,11 @@ this.throttle=clamp(this.throttle+(u.power||0)*dt*.25,0,1);const wind=this.wind?
  const support=(this.surface?.(this.x,this.z)?.height??terrain(this.x,this.z))+Math.max(c.belly,c.gear*this.gearExtension);
  const canMove=!this.ground||this.y+this.vy*dt>support+1e-8;
  if(canMove){
- this.pitch+=(u.pitch*.28+w.pitch*response-this.pitch)*dt*3;this.bank+=(u.roll*.3+w.roll*response-this.bank)*dt*3;
+ const longitudinal=clamp((u.pitch||0)+(this.trim||0)*.35,-1,1);
+ this.pitch+=(longitudinal*.28+w.pitch*response-this.pitch)*dt*3;this.bank+=(u.roll*.3+w.roll*response-this.bank)*dt*3;
  this.heading+=(u.yaw||0)*dt*c.yawRate;
  const fx=Math.sin(this.heading),fz=-Math.cos(this.heading),rx=Math.cos(this.heading),rz=Math.sin(this.heading);
- const forward=-u.pitch*c.heliSpeed-w.pitch*response*9,side=u.roll*c.heliSpeed*.75+w.roll*response*9;
+ const forward=-longitudinal*c.heliSpeed-w.pitch*response*9,side=u.roll*c.heliSpeed*.75+w.roll*response*9;
  this.vx+=((fx*forward+rx*side+w.x*.35)-this.vx)*dt*c.heliResponse;
  this.vz+=((fz*forward+rz*side+w.z*.35)-this.vz)*dt*c.heliResponse;
  }else{this.vx=this.vz=0;this.pitch=this.bank=0;}

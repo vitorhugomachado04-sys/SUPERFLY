@@ -1,5 +1,5 @@
-import {WIND_PLACES} from './winds-layout.js?v=04.3';
-import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.3';
+import {WIND_PLACES} from './winds-layout.js?v=04.9';
+import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.9';
 // Shared coastline and relief: rendering and ground contact use the same shape.
 export function coastRadius(x,z){const a=Math.atan2(z/2275,x/1820);return Math.hypot(x/1820,z/2275)/(1+.055*Math.sin(a*3+.4)+.025*Math.cos(a*5));}
 function schoolTerrain(x,z){if(coastRadius(x,z)>1)return -3;let h=3;for(const [cx,cz,a,w]of[[-950,-800,150,400],[1050,-1300,200,460],[-1200,1000,110,380]])h+=a*Math.exp(-((x-cx)**2+(z-cz)**2)/(w*w));const t=Math.max(0,Math.min(1,Math.max((Math.abs(x)-230)/250,(Math.abs(z)-1200)/400)));return 3+(h-3)*t*t*(3-2*t);}

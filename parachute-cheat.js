@@ -1,10 +1,9 @@
-import {topCamera} from './top-camera.js?v=04.3';
+import {topCamera} from './top-camera.js?v=04.9';
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.3';
-const WORD='parachute';
+import {terrain} from './geography.js?v=04.9';
 export const supportsParachute=config=>config.parachutists??(config.id==='skycourier'||!!config.helicopter);
 export class CheatWord{
- constructor(){this.reset();}
+ constructor(word='parachute'){this.word=word;this.reset();}
  reset(){this.buffer='';this.last=0;}
  feed(e,enabled,now){
   if(!enabled||e.ctrlKey||e.metaKey||e.altKey||e.target?.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){this.reset();return false;}
@@ -12,8 +11,8 @@ export class CheatWord{
   const key=e.key?.toLowerCase();if(e.repeat)return !!this.buffer&&key?.length===1;
   if(key?.length!==1)return false;
   const candidate=this.buffer+key;
-  if(WORD.startsWith(candidate)){this.buffer=candidate;this.last=now;if(candidate===WORD){this.reset();this.onComplete?.();}return true;}
-  this.buffer=key==='p'?'p':'';this.last=now;return key==='p';
+  if(this.word.startsWith(candidate)){this.buffer=candidate;this.last=now;if(candidate===this.word){this.reset();this.onComplete?.();}return true;}
+  this.buffer=key===this.word[0]?key:'';this.last=now;return key===this.word[0];
  }
 }
 export class ParachuteCheat{

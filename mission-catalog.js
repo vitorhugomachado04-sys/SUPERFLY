@@ -5,7 +5,7 @@ const main=[
  ['storm','04 · Frente de tempestade','city','alpine','cessna','storm',16,null,'Cruze a frente e pouse na pista curta e inclinada da base alpina.'],
  ['peaks','05 · Medicamentos entre picos','alpine','peak','cessna','snow',16,null,'Leve os medicamentos ao posto entre as montanhas.'],
  ['aurora','06 · Nevasca e aurora','peak','snow','cessna','blizzard',21,null,'Atravesse a neve e encontre a pista iluminada sob a aurora.'],
- ['desert','07 · Travessia do deserto','snow','base','boeing','dust',17,null,'Assuma o Boeing em solo e leve a equipe à Base Horizonte.'],
+ ['desert','07 · Travessia do deserto','snow','base','boeing','dust',17,null,'Assuma o Superfly Horizon em solo e leve a equipe à Base Horizonte.'],
  ['carrier','08 · Regresso à frota','base','carrier','naval','partial',16,'intercept','Intercepte o drone cargueiro fictício e pouse no PAN-01 com gancho e cabos.']
 ];
 const extras=[
@@ -13,7 +13,7 @@ const extras=[
  ['heli','Entre prédios','city','city','r22','partial',9,'heli','Recolha a encomenda na Torre Porto, entregue no Hospital e retorne.','fog'],
  ['gear','Trem e picape','city','city','executive','clear',14,'gear','Encontre a picape, destrave o trem e faça outra aproximação.','fog'],
  ['lito','Homenagem ao Lito · Carga vital','city','city','executive','storm',23,'urgent','Voe até o ponto de transferência do órgão e retorne em até 12 minutos. Homenagem fictícia à aviação.','fog'],
- ['birds','Bird strike · Retorno do Cargo','city','city','skycourier','partial',10,'birds','Enfrente a perda de um motor, isole a pane e retorne à metrópole.','fog'],
+ ['birds','Bird strike · Retorno do Superfly Atlas','city','city','skycourier','partial',10,'birds','Enfrente a perda de um motor, isole a pane e retorne à metrópole.','fog'],
  ['supplies','Suprimentos nas montanhas','alpine','alpine','cessna','partial',14,'supply','Sobrevoe a zona, lance os suprimentos com X e retorne à base alpina.','storm'],
  ['cable-rescue','Busca no teleférico','peak','resort','h145','snow',15,'rescue','Localize o posto do teleférico, mantenha o pairado e leve a equipe ao resort.','peaks'],
  ['escort','Escolta na nevasca','snow','snow','cessna','blizzard',20,'escort','Encontre a aeronave e acompanhe-a até a área de melhor visibilidade; depois pouse.','aurora'],
@@ -21,7 +21,7 @@ const extras=[
  ['canyons','Correio dos cânions','base','dunes','cessna','clear',15,null,'Leve o correio ao pequeno campo de terra. A viagem principal continua na Base Horizonte.','desert']
 ];
 export const MAIN_IDS=main.map(m=>m[0]);
-const make=(row,extra=false,index=0)=>{const [id,name,from,to,aircraft,weather,hour,special,objective,dep]=row;return{id,name,from,to,aircraft,weather,hour,special,kind:extra?'extra':'main',dependencies:extra?[dep]:index?[main[index-1][0]]:[],objectives:[objective],completion:{type:'landing',airport:to,maxGroundSpeed:2,holdSeconds:2,requiresSpecial:!!special,requiresCable:to==='carrier'},cover:`./${id}.svg`,status:'playable',radio:`Lia · Operações Panorama: ${objective}`};};
+const make=(row,extra=false,index=0)=>{const [id,name,from,to,aircraft,weather,hour,special,objective,dep]=row;return{id,name,from,to,aircraft,weather,hour,special,kind:extra?'extra':'main',dependencies:extra?[dep]:index?[main[index-1][0]]:[],objectives:[objective],completion:{type:'landing',airport:to,maxGroundSpeed:2,holdSeconds:2,requiresSpecial:!!special,requiresCable:to==='carrier'},cover:`./${id}.jpg`,status:'playable',radio:`Lia · Operações Panorama: ${objective}`};};
 export const MISSIONS=[...main.map((r,i)=>make(r,false,i)),...extras.map(r=>make(r,true))];
 const pending=[
  ['levee','Pouso no dique','fog','boeing','city','city','Dique com superfície de pouso e cenário próprio.'],

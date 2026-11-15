@@ -1,9 +1,9 @@
-import {topCamera} from './top-camera.js?v=04.3';
+import {topCamera} from './top-camera.js?v=04.9';
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.3';
-import {buildYacht} from './yacht.js?v=04.3';
-import {aircraft} from './aircraft.js?v=04.3';
-import {getAircraft} from './fleet.js?v=04.3';
+import {terrain} from './geography.js?v=04.9';
+import {buildYacht} from './yacht.js?v=04.9';
+import {aircraft} from './aircraft.js?v=04.9';
+import {getAircraft} from './fleet.js?v=04.9';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const ZERO={pitch:0,roll:0,yaw:0,power:0,brake:false};
 export class ChallengeAdventures{
@@ -22,8 +22,8 @@ export class ChallengeAdventures{
    this.ship=buildYacht(this.group,{obstacles:[],nightLights:[]});this.ship.position.set(4000,0,-6000);this.target={x:4000,y:10,z:-5945,vx:2,vz:-.5,height:10,id:'yacht-target'};this.ring(0,10.08,55,14,'#cbb2ff',this.ship);
    this.spawn(f,3997,235,-5925,38);this.parachute.surface=(x,z)=>Math.abs(x-this.target.x)<18&&Math.abs(z-this.target.z)<20?this.target:null;
   }else if(this.id==='ice-factory'){
-   this.snow={x:-10000,z:-600,y:1450};this.buildSnow();this.spawn(f,-10003,1700,-570,0,Math.PI);this.parachute.surface=(x,z)=>this.snowSurface(x,z);
-   if(checkpoint){this.parachute.jump(f,{enabled:true,mission:true});const p=this.parachute.focus;p.g.position.copy(checkpoint.position);p.heading=checkpoint.heading;p.landed=true;p.opened=true;p.landingVelocity={x:checkpoint.vx,z:checkpoint.vz};this.beginSnow(p);}
+   this.snow={x:-10000,z:-600,y:1450};this.buildSnow();f.spawn('resort');f.heading=Math.PI;this.parachute.surface=(x,z)=>this.snowSurface(x,z);
+   if(checkpoint){f.ground=false;f.y=1700;this.parachute.jump(f,{enabled:true,mission:true});const p=this.parachute.focus;p.g.position.copy(checkpoint.position);p.heading=checkpoint.heading;p.landed=true;p.opened=true;p.landingVelocity={x:checkpoint.vx,z:checkpoint.vz};this.beginSnow(p);}
   }else if(this.id==='water-mirror'){
    this.lake={x:-7900,z:-10500,y:70};const a=this.lake;this.target={x:a.x,y:a.y,z:a.z-505};
    const water=this.mesh(new T.PlaneGeometry(800,1500),'#477f91',a.x,a.y,a.z);water.rotation.x=-Math.PI/2;water.material.roughness=.23;water.material.metalness=.35;
@@ -37,10 +37,10 @@ export class ChallengeAdventures{
    const a=this.fields[0];this.spawn(f,a.x,a.y+200,a.z+1400,27);f.throttle=0;f.surface=(x,z)=>{const a=this.fields.find(a=>Math.abs(x-a.x)<a.w/2&&Math.abs(z-a.z)<a.d/2);return a?{height:a.y,airport:{id:a.id,heading:0}}:null;};
    this.phase='tow';this.tug=aircraft(getAircraft('cessna'));this.group.add(this.tug.mesh);this.rope=this.line();this.target={x:a.x,y:a.y,z:a.z};
   }else if(this.id==='last-ferry'){
-   this.target={x:8800,y:5,z:-6200,vx:1.6,vz:0};this.ship=new T.Group();this.group.add(this.ship);this.box(0,2.5,0,42,5,90,'#365362',this.ship);this.box(0,5.05,0,39,.1,86,'#c8c6b3',this.ship);this.box(0,10,-25,30,10,22,'#e3e4d8',this.ship);this.box(0,12,-37,27,4,.2,'#37647b',this.ship);for(const side of [-1,1])for(let z=-40;z<42;z+=10)this.box(side*20,6,z,.25,2,.25,'#ede9d6',this.ship);this.ring(0,5.2,15,5,'#e8c57a',this.ship);this.survivor=this.person(0,6.2,15,this.ship);
+   this.target={x:8800,y:5,z:-6200,vx:1.6,vz:0};this.ship=new T.Group();this.group.add(this.ship);this.box(0,2.5,0,42,5,90,'#365362',this.ship);this.box(0,5.05,0,39,.1,86,'#c8c6b3',this.ship);this.box(0,10,-25,30,10,22,'#e3e4d8',this.ship);this.box(0,12,-37,27,4,.2,'#37647b',this.ship);for(const side of [-1,1])for(let z=-40;z<42;z+=10)this.box(side*20,6,z,.25,2,.25,'#ede9d6',this.ship);this.ring(0,5.2,15,5,'#75d6ac',this.ship);this.survivor=this.person(0,6.2,15,this.ship);
    this.pad={x:8940,y:9,z:-6220};this.box(this.pad.x,3,this.pad.z,110,12,110,'#60767a');this.box(this.pad.x,9.1,this.pad.z,42,.2,42,'#9baba9');this.ring(this.pad.x,9.3,this.pad.z,16);for(const s of [-1,1])this.box(this.pad.x+s*4,9.4,this.pad.z,1,.1,12,'#f1e9c8');this.box(this.pad.x,9.4,this.pad.z,8,.1,1,'#f1e9c8');
-   this.spawn(f,8800,35,-6185);f.surface=(x,z)=>Math.abs(x-this.pad.x)<50&&Math.abs(z-this.pad.z)<50?{height:9.2,airport:{id:'rescue-pad'}}:Math.abs(x-this.target.x)<21&&Math.abs(z-this.target.z)<45?{height:5,airport:{id:'ferry'}}:null;
-   this.rope=this.line();this.hook=this.mesh(new T.SphereGeometry(.5,12,8),'#efcb7b',f.x,f.y,f.z);this.winch=0;this.lowered=false;this.rescued=false;this.aboard=false;this.swing={x:0,z:0,vx:0,vz:0};this.lastVelocity={x:0,z:0};this.ship.position.set(this.target.x,0,this.target.z);
+   this.spawn(f,this.pad.x,this.pad.y+.2+f.config.gear,this.pad.z);f.ground=true;f.airborne=false;f.throttle=.08;f.surface=(x,z)=>Math.abs(x-this.pad.x)<50&&Math.abs(z-this.pad.z)<50?{height:9.2,airport:{id:'rescue-pad'}}:Math.abs(x-this.target.x)<21&&Math.abs(z-this.target.z)<45?{height:5,airport:{id:'ferry'}}:null;
+   this.rope=this.line();this.hook=this.mesh(new T.SphereGeometry(.5,12,8),'#b6a4eb',f.x,f.y,f.z);this.winch=0;this.lowered=false;this.rescued=false;this.aboard=false;this.swing={x:0,z:0,vx:0,vz:0};this.lastVelocity={x:0,z:0};this.ship.position.set(this.target.x,0,this.target.z);
   }
   this.flightCheckpoint={x:f.x,y:f.y,z:f.z,vx:f.vx,vy:f.vy,vz:f.vz,heading:f.heading,throttle:f.throttle};
  }
@@ -92,7 +92,7 @@ export class ChallengeAdventures{
    if(p?.landed){if(p.hardLanding||p.water||p.support?.id!=='yacht-target'||distance(p.g.position,this.target)>14)this.failed='Você errou a área do convés. R tenta novamente.';else{this.hold+=dt;this.message=`No convés · mantenha apoio ${(Math.max(0,2-this.hold)).toFixed(1)} s`;this.done=this.hold>=2;}}
   }else if(this.id==='ice-factory'){
    const p=this.parachute.focus;
-   this.message=p?'Toque a parte alta da pista nevada · ←/→ curva · ↑ avança · ↓/espaço freia':'Saltar do Airbus H145 · zona de salto no alto da montanha';
+   this.message=p?'Toque a parte alta da pista nevada · ←/→ curva · ↑ avança · ↓/espaço freia':'Saltar do Superfly Nimbo · zona de salto no alto da montanha';
    if(p?.landed&&this.phase!=='snow'){if(p.hardLanding||p.support?.id!=='snow-slope'||p.g.position.z>this.snow.z+160)this.failed='Pouse suavemente na parte alta da encosta. R repete o salto.';else this.beginSnow(p);}
    if(this.phase==='snow'){
     const pos=p.g.position,previous=pos.clone();p.heading+=(u.roll||0)*dt*(this.equipment==='ski'?1.2:1);this.snowSpeed=clamp(this.snowSpeed+(-Math.cos(p.heading)*4.5-.08*this.snowSpeed-(u.brake||u.pitch>0?8:0))*dt,0,26);p.vx=Math.sin(p.heading)*this.snowSpeed;p.vz=-Math.cos(p.heading)*this.snowSpeed;p.vy=0;pos.x+=p.vx*dt;pos.z+=p.vz*dt;pos.y=this.snowHeight(pos.z)+1.4;p.g.rotation.y=-p.heading;p.body.rotation.z=-(u.roll||0)*.22;p.canopy.visible=false;
