@@ -1,5 +1,6 @@
+import {enseadaReserved} from './enseada-layout.js?v=04.27';
 import * as T from './three.js';
-import {terrain,coastRadius,eastCoast,groves} from './geography.js?v=04.9';
+import {terrain,coastRadius,eastCoast,groves} from './geography.js?v=04.27';
 
 export function addScenery(scene,obstacles,rand){
  const mats=new Map(),mat=c=>{if(!mats.has(c))mats.set(c,new T.MeshStandardMaterial({color:c,roughness:.95,flatShading:true}));return mats.get(c);};
@@ -9,9 +10,9 @@ export function addScenery(scene,obstacles,rand){
  function house(x,z,w,d,h,c,roofColor){const y=terrain(x,z);block(x,y+h/2,z,w,h,d,c);mesh(cone,roofColor,x,y+h+4,z,w*.78,9,d*.78,Math.PI/4);block(x,y+h*.6,z+d/2+.1,w*.6,h*.3,.15,'#456674');obstacles.push({x,z,w,d,top:y+h+9});}
  // Three tree silhouettes, clustered into woods rather than evenly scattered.
  const forest=[],broad=[],palms=[];
- for(let i=0;i<1200;i++){
+ for(let i=0;i<4500;i++){
   const x=(rand()-.5)*3640,z=(rand()-.5)*4550,h=terrain(x,z),r=coastRadius(x,z);
-  if(h<0||r>.94||Math.abs(x)<300&&Math.abs(z)<1500||x>550&&x<1100&&z>380&&z<900||x>-1200&&x<-450&&z>300&&z<1100)continue;
+  if(enseadaReserved(x,z,20)||h<0||r>.94||Math.abs(x)<300&&Math.abs(z)<1500||x>550&&x<1100&&z>380&&z<900||x>-1200&&x<-450&&z>300&&z<1100)continue;
   const density=.5+.25*Math.sin(x*.005)*Math.cos(z*.004)+.2*Math.sin((x+z)*.009);
   if(rand()>density)continue;
   const size=9+rand()*16;(h>65?forest:broad).push({x,y:h,z,size,angle:rand()*6.28});
@@ -19,13 +20,13 @@ export function addScenery(scene,obstacles,rand){
  // Concentrated stands create distinct woodland silhouettes from altitude.
  for(const [cx,cz,radius]of groves)for(let i=0;i<220;i++){
   const angle=rand()*Math.PI*2,distance=Math.sqrt(rand())*radius,x=cx+Math.cos(angle)*distance,z=cz+Math.sin(angle)*distance,h=terrain(x,z);
-  if(h<0||Math.abs(x)<300&&Math.abs(z)<1500)continue;
+  if(enseadaReserved(x,z,20)||h<0||Math.abs(x)<300&&Math.abs(z)<1500)continue;
   (h>65?forest:broad).push({x,y:h,z,size:18+rand()*17,angle:rand()*6.28});
  }
  // Palms follow the beaches, keeping the runway's two approach corridors open.
  for(let i=0;i<100;i++){
   const a=i/100*Math.PI*2,r=.955,x=Math.cos(a)*1820*r,z=Math.sin(a)*2275*r,h=terrain(x,z);
-  if(h<0||Math.abs(x)<300&&Math.abs(z)<1800)continue;palms.push({x,y:h,z,size:12+rand()*8,angle:rand()*6.28});
+  if(enseadaReserved(x,z,20)||h<0||Math.abs(x)<300&&Math.abs(z)<1800)continue;palms.push({x,y:h,z,size:12+rand()*8,angle:rand()*6.28});
  }
  function batch(geo,color,items,transform){if(!items.length)return;const b=new T.InstancedMesh(geo,mat(color),items.length),dummy=new T.Object3D();items.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(0,p.angle,0);dummy.scale.set(1,1,1);transform(dummy,p,i);dummy.updateMatrix();b.setMatrixAt(i,dummy.matrix);});b.userData.windResponsive=color!=='#a6aa97';b.castShadow=true;b.receiveShadow=true;b.computeBoundingSphere();scene.add(b);}
  const trunk=new T.CylinderGeometry(.5,.7,1,5);
@@ -62,7 +63,7 @@ export function addScenery(scene,obstacles,rand){
 
  // Coastal rocks form visible headlands; kept outside the learning airfield.
  const rocks=[];
- for(let i=0;i<150;i++){const a=rand()*Math.PI*2,x=Math.cos(a)*1787.5,z=Math.sin(a)*2223,h=terrain(x,z);if(h<0||coastRadius(x,z)<.9||Math.abs(x)<350)continue;rocks.push({x,y:h,z,size:6+rand()*18,angle:a});}
+ for(let i=0;i<150;i++){const a=rand()*Math.PI*2,x=Math.cos(a)*1787.5,z=Math.sin(a)*2223,h=terrain(x,z);if(enseadaReserved(x,z,20)||h<0||coastRadius(x,z)<.9||Math.abs(x)<350)continue;rocks.push({x,y:h,z,size:6+rand()*18,angle:a});}
  batch(rockGeo,'#a6aa97',rocks,(d,p)=>{d.position.y+=p.size*.25;d.scale.set(p.size,p.size*.65,p.size*.7);});
  return {trees:forest.length+broad.length+palms.length,landmarks:4};
 }

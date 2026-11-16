@@ -1,6 +1,6 @@
-import {PARKING_STANDS} from './airport-life.js?v=04.9';
+import {PARKING_STANDS} from './airport-life.js?v=04.27';
 import * as T from './three.js';
-import {terrain,coastRadius,groves} from './geography.js?v=04.9';
+import {terrain,coastRadius,groves} from './geography.js?v=04.27';
 export const AIRPORT={left:-36,right:195,near:-885,far:885};
 
 // Cut an exact opening for the airport: no terrain remains under its surface.
@@ -11,7 +11,7 @@ export function islandGeometry(){
  for(const z of zs)for(const x of xs){
   const r=coastRadius(x,z),h=terrain(x,z);
   positions.push(x,r>1?-5:h,z);uvs.push((x+3100)/6200,1-(z+3900)/7800);
-  color.set(r>.94?'#e2d7a4':h>180?'#879b8b':h>70?'#779779':'#9ab895');if(x>=AIRPORT.left-30&&x<=AIRPORT.right&&z>=AIRPORT.near&&z<=AIRPORT.far)color.set('#929a98');colors.push(color.r,color.g,color.b);
+  color.set(r>.94&&h<8?'#e2d7a4':h>180?'#879b8b':h>70?'#779779':'#9ab895');if(x>=AIRPORT.left-30&&x<=AIRPORT.right&&z>=AIRPORT.near&&z<=AIRPORT.far)color.set('#929a98');colors.push(color.r,color.g,color.b);
  }
  for(let j=0;j<zs.length-1;j++)for(let i=0;i<xs.length-1;i++){
   const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;

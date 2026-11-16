@@ -33,7 +33,24 @@ export function challengeAircraft(c){
 export function addFloats(model){
  // Hide only the C152 wheels and their struts; retain the high-wing supports.
  for(const m of model.mesh.children){if(m.geometry?.type==='CylinderGeometry'&&m.position.y<0)m.visible=false;}
- const mat=new T.MeshStandardMaterial({color:'#d3dce0',metalness:.35,roughness:.4});
- for(const side of [-1,1]){const float=new T.Mesh(new T.SphereGeometry(1,24,12),mat);float.scale.set(.36,.34,2.5);float.position.set(side*1.12,-1.28,-.3);float.castShadow=true;model.mesh.add(float);for(const z of [-1.2,.8]){const strut=new T.Mesh(new T.CylinderGeometry(.045,.045,1,8),mat);strut.position.set(side*1.12,-.67,z);model.mesh.add(strut);}}
+ const mat=new T.MeshStandardMaterial({color:'#f5f5ee',metalness:.35,roughness:.4});
+ const floatBox=(x,y,z,w,h,d)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;model.mesh.add(m);return m;};
+ for(const side of [-1,1]){
+  const x=side*1.12;
+  floatBox(x,-1.13,-.3,.78,.3,4.8).name='white-float-deck';
+  for(const [z,d] of [[-2.31,.78],[-.3,1.68],[1.71,.78]])floatBox(x,-1.43,z,.78,.3,d);
+  // Narrow inner walls leave the wheel wells open to the outside and underside.
+  for(const z of [-1.5,.9])floatBox(x-side*.28,-1.43,z,.16,.3,.72);
+  for(const z of [-1.2,.8]){const strut=new T.Mesh(new T.CylinderGeometry(.045,.045,1,8),mat);strut.position.set(x,-.67,z);model.mesh.add(strut);}
+ }
+ // Four wheels recessed into the white float bodies; the floats retain their water contact height.
+ const tires=new T.MeshStandardMaterial({color:'#263139',roughness:1});
+ const wheels=[];
+ for(const side of [-1,1])for(const z of [-1.5,.9]){
+  const strut=new T.Mesh(new T.CylinderGeometry(.055,.055,.4,8),mat);strut.position.set(side*1.12,-1.43,z);strut.castShadow=true;model.mesh.add(strut);
+  const axle=new T.Mesh(new T.CylinderGeometry(.055,.055,.4,8),mat);axle.rotation.z=Math.PI/2;axle.position.set(side*1.12,-1.28,z);model.mesh.add(axle);
+  const wheel=new T.Mesh(new T.CylinderGeometry(.3,.3,.18,16),tires);wheel.rotation.z=Math.PI/2;wheel.position.set(side*1.12,-1.65,z);wheel.castShadow=true;wheel.name='amphibious-wheel';model.mesh.add(wheel);wheels.push(wheel);
+ }
+ const update=model.update.bind(model);model.update=(f,u,dt)=>{update(f,u,dt);for(const w of wheels)w.rotation.x+=f.speed*dt/.3;};
  return model;
 }

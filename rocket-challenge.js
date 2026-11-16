@@ -1,10 +1,10 @@
-import {RocketImpact} from './rocket-impact.js?v=04.9';
+import {RocketImpact} from './rocket-impact.js?v=04.27';
 import * as T from './three.js';
-import {RocketFlight,SPACEPORT,OCEAN_PAD} from './rocket-flight.js?v=04.9';
-import {rocketModel,addSpaceport,oceanPlatform} from './spaceport.js?v=04.9';
-import {terrain} from './geography.js?v=04.9';
-import {interpolateRocketPose} from './rocket-render.js?v=04.9';
-import {RocketCamera,ROCKET_CAMERAS} from './rocket-camera.js?v=04.9';
+import {RocketFlight,SPACEPORT,OCEAN_PAD} from './rocket-flight.js?v=04.27';
+import {rocketModel,addSpaceport,oceanPlatform} from './spaceport.js?v=04.27';
+import {terrain} from './geography.js?v=04.27';
+import {interpolateRocketPose} from './rocket-render.js?v=04.27';
+import {RocketCamera,ROCKET_CAMERAS} from './rocket-camera.js?v=04.27';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export class RocketChallenge{
  constructor(camera,sound,onExit){this.camera=camera;this.rig=new RocketCamera(camera);this.sound=sound;this.onExit=onExit;this.active=false;this.flight=new RocketFlight();this.touch={roll:0,pitch:0};this.makeUI();window.addEventListener('keydown',e=>{if(!this.active||e.repeat)return;if(e.code==='KeyX'||e.code==='Space'){e.preventDefault();if(!this.paused)this.flight.action();}if(e.code==='KeyC'){e.preventDefault();this.cycleCamera();}if(e.code==='Escape')this.pause();if(e.code==='KeyR')this.start();});window.addEventListener('blur',()=>{if(this.active&&!this.paused)this.pause();});}

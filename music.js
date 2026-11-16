@@ -2,7 +2,7 @@
 export class Soundtrack{
  constructor(){
   this.enabled=true;try{this.enabled=localStorage.getItem('superfly-music')!=='off';}catch{}
-  this.audio=document.createElement('audio');this.audio.id='soundtrack';this.audio.src=new URL('./superfly-soundtrack.m4a',import.meta.url).href;this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.32;this.audio.hidden=true;document.body.append(this.audio);
+  this.audio=document.createElement('audio');this.audio.id='soundtrack';this.audio.src=new URL('./superfly-soundtrack.mp3?v=04.27',import.meta.url).href;this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.32;this.audio.hidden=true;document.body.append(this.audio);
   document.querySelectorAll('[data-music]').forEach(button=>button.addEventListener('click',()=>this.toggle()));
   // Browsers may require the first click/key before allowing audible playback.
   const unlock=e=>{if(e.target.closest?.('[data-music]'))return;this.play();};

@@ -1,12 +1,12 @@
-import {airportById} from './airports.js?v=04.9';
+import {airportById} from './airports.js?v=04.27';
 export const LANDING_CHALLENGES=[
  {id:'carrier',name:'01 · Cabo no convés',aircraft:'naval',to:'carrier',weather:'coastal',hour:15,description:'Caça naval · Oceano · Capture um cabo e pare no convés.',hint:'Final 000. Trem baixo · F flaps · H gancho. Capture um cabo e pare.',height:92,distance:1800,speed:50,throttle:.35},
  {id:'rooftop',name:'02 · Tempestade sobre a cidade',aircraft:'bell47',to:'roof-a',weather:'storm',hour:18,description:'Superfly Bolha · Torre Porto · Chuva, rajadas e visibilidade reduzida.',hint:'Pouse no H da Torre Porto e permaneça parado por 3 s. Setas: deslocamento · W/S: coletivo.',height:85,distance:140,speed:6,throttle:.5,overrides:{wind:12,gust:7,turbulence:.85,visibility:1800,direction:75}},
  {id:'engine',name:'03 · Carga preciosa, um motor só',aircraft:'skycourier',to:'city',weather:'overcast',hour:10,description:'Cargueiro bimotor · Motor direito inoperante · 50% da potência disponível.',hint:'Motor direito em pane. Corrija para a esquerda com roll e Q. Pouse na Metrópole e freie até parar.',height:155,distance:1950,speed:47,throttle:.72},
  {id:'starship',name:'04 · Starship: ida e volta',rocket:true,aircraft:'cessna',to:'wind',description:'Ilha dos Ventos · Lançamento ao espaço · Retorno propulsivo sobre o oceano'},
- {id:'luxury-jump',name:'05 · Salto de Luxo',aircraft:'caravan',adventure:true,parachutists:true,to:'yacht',weather:'clear',hour:15,description:'Pouse de paraquedas no convés de um iate em movimento.'},
+ {id:'luxury-jump',name:'05 · Salto de Luxo',aircraft:'skycourier',adventure:true,parachutists:true,to:'yacht',weather:'clear',hour:15,description:'Pilote o Cargo por cerca de 30 segundos até o iate, salte e pouse de paraquedas no convés.'},
  {id:'water-mirror',name:'06 · Espelho d’Água',aircraft:'c152-floats',adventure:true,to:'alpine',weather:'clear',hour:10,description:'Pouse no lago e deslize até parar junto ao cais.'},
- {id:'wrong-tow',name:'07 · Reboque na Hora Errada',aircraft:'ask21',adventure:true,to:'peak',weather:'clear',hour:16,description:'Solte o cabo e alcance um dos dois campos sem motor.'},
+ {id:'wrong-tow',name:'07 · Reboque na Hora Errada',aircraft:'ask21',adventure:true,to:'peak',weather:'clear',hour:16,description:'Solte o cabo, plane até o aeroporto Posto dos Picos e pare na pista.'},
  {id:'last-ferry',name:'08 · A Última Balsa',aircraft:'bell412',adventure:true,to:'wind',weather:'coastal',hour:17,description:'Resgate com guincho na balsa e leve a pessoa até o cais.'},
  {id:'ice-factory',name:'09 · Fábrica de Gelo',aircraft:'h145',adventure:true,parachutists:true,to:'resort',weather:'clear',hour:14,description:'Salte do Superfly Nimbo e complete a descida de snowboard ou esqui.'}
 ];

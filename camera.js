@@ -1,7 +1,7 @@
-import {topCamera} from './top-camera.js?v=04.9';
+import {topCamera} from './top-camera.js?v=04.27';
 import * as T from './three.js';
-import {terrain} from './physics.js?v=04.9';
-import {nearestAirport} from './airports.js?v=04.9';
+import {terrain} from './physics.js?v=04.27';
+import {nearestAirport} from './airports.js?v=04.27';
 export const CAMERA_MODES=['SEGUIR','CABINE','AEROPORTO','CINEMÁTICA','DE CIMA'];
 export const CINEMATIC_SHOTS=['Escolta lateral','Frente a frente','Asa esquerda','Vista do alto','Passagem','Traseira baixa','Órbita','Panorama','Diagonal frontal','Despedida'];
 export const nextCameraMode=mode=>(mode+1)%CAMERA_MODES.length;
@@ -23,13 +23,13 @@ export class FlightCamera {
  }else if(mode===1){
  camera.position.set(f.x+Math.sin(f.heading)*c.cabinZ,f.y+c.cabinY,f.z-Math.cos(f.heading)*c.cabinZ);const pitch=f.pitch-this.elevation;this.target.set(camera.position.x+fx*Math.cos(pitch)*100,camera.position.y+Math.sin(pitch)*100,camera.position.z+fz*Math.cos(pitch)*100);
  }else{
- this.cinemaTime+=Math.max(0,dt);const shot=Math.floor((this.cinemaTime+1e-8)/10)%10,t=(this.cinemaTime%10)/10,d=c.cameraDistance;
+ this.cinemaTime+=Math.max(0,dt);const shot=Math.floor((this.cinemaTime+1e-8)/10)%10,t=(this.cinemaTime%10)/10,d=Math.max(c.cameraDistance,(this.bannerLength||0)+18);
  const placements=[[1.7,.5,.3],[.45,.32,1.8],[-1.2,.25,-.2],[.15,2.8,.2],[2,.5,2.2],[.4,.18,-1.7],[Math.cos(t*1.8)*1.8,.65,Math.sin(t*1.8)*1.8],[-3.6,1.8,-2.7],[1.1,.7,1.4],[-.8,1+t,-2-t*2]];
  const [side,up,ahead]=placements[shot],rx=Math.cos(f.heading),rz=Math.sin(f.heading);
  this.desired.set(f.x+rx*side*d+fx*ahead*d,f.y+up*d,f.z+rz*side*d+fz*ahead*d);
  if(shot!==this.shot){this.anchor.copy(this.desired);if(shot===4){this.anchor.x+=fx*Math.min(350,(f.speed||0)*4);this.anchor.z+=fz*Math.min(350,(f.speed||0)*4);}this.shot=shot;cut=true;}
  if(shot===4)camera.position.copy(this.anchor);else if(cut)camera.position.copy(this.desired);else camera.position.lerp(this.desired,1-Math.exp(-dt*5));
- this.target.set(f.x,f.y+c.cabinY*.3,f.z);
+ const trailing=this.bannerLength?(9+this.bannerLength)*.45:0;this.target.set(f.x-fx*trailing,f.y+c.cabinY*.3,f.z-fz*trailing);
  camera.position.y=Math.max(camera.position.y,terrain(camera.position.x,camera.position.z)+3);
  // Raise cinematic viewpoints when terrain or scenery cuts the line of sight.
  for(const k of [0,.25,.5,.75]){const x=camera.position.x+(f.x-camera.position.x)*k,z=camera.position.z+(f.z-camera.position.z)*k;let top=terrain(x,z)+3;for(const o of this.obstacles||[])if(Math.abs(x-o.x)<o.w/2+3&&Math.abs(z-o.z)<o.d/2+3)top=Math.max(top,o.top+3);camera.position.y=Math.max(camera.position.y,(top-f.y*k)/(1-k));}

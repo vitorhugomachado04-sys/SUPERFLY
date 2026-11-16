@@ -34,7 +34,7 @@ const menuFocus=new WeakMap();let lastMenu=null;
 export function syncPadMenu(){
  const root=['options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
  if(!root)return null;
- if(root!==lastMenu){if(lastMenu?.contains(document.activeElement))menuFocus.set(lastMenu,document.activeElement);const saved=menuFocus.get(root);if(saved?.isConnected&&saved.getClientRects().length)saved.focus({preventScroll:true});else root.querySelector('button:not([disabled]),select:not([disabled]),input:not([disabled])')?.focus({preventScroll:true});lastMenu=root;}return root;
+ if(root!==lastMenu){if(lastMenu?.contains(document.activeElement))menuFocus.set(lastMenu,document.activeElement);const saved=menuFocus.get(root);if(saved?.isConnected&&saved.getClientRects().length)saved.focus({preventScroll:true});else [...root.querySelectorAll('button:not([disabled]),select:not([disabled]),input:not([disabled])')].find(e=>e.getClientRects().length)?.focus({preventScroll:true});lastMenu=root;}return root;
 }
 export function navigatePadMenu(direction){
  const root=syncPadMenu();if(!root)return;

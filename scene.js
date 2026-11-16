@@ -1,9 +1,11 @@
-import {addClouds} from './clouds.js?v=04.9';
-import {addControlTower} from './control-tower.js?v=04.9';
-import {addAirportLife} from './airport-life.js?v=04.9';
-import * as T from './three.js';import{terrain}from './physics.js?v=04.9';import{islandGeometry,airportSurface,landTexture}from './airport.js?v=04.9';
-import{eastCoast}from './geography.js?v=04.9';
-import{addScenery}from './scenery.js?v=04.9';
+import {addEnseada} from './enseada.js?v=04.27';
+import {CIRCUIT_POINTS,flightGate,orientGate} from './flight-plan.js?v=04.27';
+import {addClouds} from './clouds.js?v=04.27';
+import {addControlTower} from './control-tower.js?v=04.27';
+import {addAirportLife} from './airport-life.js?v=04.27';
+import * as T from './three.js';import{terrain}from './physics.js?v=04.27';import{islandGeometry,airportSurface,landTexture}from './airport.js?v=04.27';
+import{eastCoast}from './geography.js?v=04.27';
+import{addScenery}from './scenery.js?v=04.27';
 export const material=(color)=>new T.MeshStandardMaterial({color,flatShading:true,roughness:.85});
 export function box(parent,x,y,z,w,h,d,color){let m=new T.Mesh(new T.BoxGeometry(w,h,d),material(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 export function buildWorld(scene,anisotropy=1){const obstacles=[],clouds=[];scene.background=new T.Color('#a6d6d9');scene.fog=new T.FogExp2('#b1d8d6',.00012);scene.add(new T.HemisphereLight('#f9f2d1','#648784',1.8));let sun=new T.DirectionalLight('#fff2ce',2.4);sun.position.set(-400,800,300);sun.castShadow=true;
@@ -36,7 +38,7 @@ export function buildWorld(scene,anisotropy=1){const obstacles=[],clouds=[];scen
  for(let z=-830;z<850;z+=65)for(const x of [-34,34])box(scene,x,3.5,z,.8,.7,.8,'#fff7c3');
  for(let z of [90,190,290]){obstacles.push({x:155,z,w:64,d:65,top:30});box(scene,155,15,z,58,24,60,'#e0d9bd');box(scene,155,28,z,64,4,65,'#6a659e');box(scene,124,13,z,1,20,48,'#526369');}addControlTower(scene,obstacles,{id:'school',x:0,z:0});
  addAirportLife(scene,obstacles);
- let seed=17;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};const sceneryInfo=addScenery(scene,obstacles,rand);
+ let seed=17;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};const sceneryInfo=addScenery(scene,obstacles,rand);const enseadaWorld={obstacles};addEnseada(scene,enseadaWorld);
  let lx=eastCoast(1600)-45,lz=1600,lh=terrain(lx,lz);obstacles.push({x:lx,z:lz,w:20,d:20,top:lh+60});for(let i=0;i<5;i++){let cyl=new T.Mesh(new T.CylinderGeometry(9-i,10-i,9,10),material(i%2?'#c78069':'#f4ead1'));cyl.position.set(lx,lh+4.5+i*9,lz);cyl.castShadow=true;cyl.receiveShadow=true;scene.add(cyl);}box(scene,lx,lh+48,lz,15,7,15,'#536b75');let roof=new T.Mesh(new T.ConeGeometry(13,9,10),material('#6a659e'));roof.position.set(lx,lh+56,lz);roof.castShadow=true;roof.receiveShadow=true;scene.add(roof);
  clouds.push(...addClouds(scene,rand));
- const gates=[];for(let [x,y,z]of [[0,160,-1500],[1100,240,-2300]]){let m=new T.Mesh(new T.TorusGeometry(78,3.2,8,64),new T.MeshBasicMaterial({color:'#6A659E',transparent:true,opacity:.95}));m.position.set(x,y,z);scene.add(m);gates.push(m);}return{gates,obstacles,updateShadows,sceneryInfo,sun,shadowOffset,clouds,ambient:scene.children.find(o=>o.isHemisphereLight),nightLights:[]};}
+ const gates=CIRCUIT_POINTS.map((p,i)=>{const m=flightGate();orientGate(m,i?CIRCUIT_POINTS[i-1]:{x:0,z:0},p);scene.add(m);return m;});return{enseadaInfo:enseadaWorld.enseadaInfo,gates,obstacles,updateShadows,sceneryInfo,sun,shadowOffset,clouds,ambient:scene.children.find(o=>o.isHemisphereLight),nightLights:[]};}

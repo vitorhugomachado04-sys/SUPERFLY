@@ -145,3 +145,16 @@ body.skydiving #wheel-brake{display:block!important}
 #vhs-notice{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:100;pointer-events:none;color:#fff;font:13px monospace;letter-spacing:.2em;text-shadow:0 1px 4px #000;opacity:0;transition:opacity .25s}#vhs-notice.visible{opacity:1}
 
 img.challenge-cover{display:block;object-fit:cover;height:auto;box-sizing:border-box}
+
+body.glider-flight .instruments .power,body.glider-flight #touch .throttle{display:none!important}
+
+#letterman-keys{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-height:40vh;overflow:auto}#letterman-keys button{min-width:0;padding:8px;font-size:11px}.cheat-option{font-size:12px}
+
+.challenge-card:hover,.challenge-card:focus-visible,.challenge-card:focus{background:#314c59;color:#fff}.challenge-card:hover b,.challenge-card:focus b{color:#f1eaff}.menu-actions button:hover,.menu-actions button:focus-visible{background:#f6f3df;color:#263c44}.cheat-option:focus{outline:3px solid #e9f296;background:#f6f3df;color:#263c44}
+
+/* Keep labels readable on cards and nested menu controls. */
+.challenge-card:hover,.challenge-card:focus-visible,.career-card:hover,.career-card:focus-visible{color:#fff!important;background:#314c59!important}
+.challenge-card:hover *,.challenge-card:focus-visible *,.career-card:hover *,.career-card:focus-visible *{color:inherit!important}
+.menu-actions button:hover *,.menu-actions button:focus-visible *{color:#263c44!important}
+#cheats-area{border-top:1px solid #ffffff40;margin-top:18px;padding-top:12px}#cheats-area h3{color:#e9f296;letter-spacing:3px;margin:0}#cheats-area p{font-size:11px}#cheats-area button{padding:12px;font-size:10px}
+#modal>div{max-height:95vh;overflow:auto}

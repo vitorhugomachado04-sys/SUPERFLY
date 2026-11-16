@@ -1,17 +1,19 @@
+import {addCoastalLife} from './coastal-life.js?v=04.27';
 import * as T from './three.js';
-import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.9';
-import {populateRegion} from './region-detail.js?v=04.9';
-import {terrain,regionRadius} from './geography.js?v=04.9';
+import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.27';
+import {populateRegion} from './region-detail.js?v=04.27';
+import {terrain,regionRadius} from './geography.js?v=04.27';
 // The wide apron only surrounds the hangars; runway shoulders stay narrow.
 function apronRight(a,z){const dz=z-a.z;if(a.id==='city'&&dz>=-850&&dz<=850)return a.x+270;if(dz>=-230&&dz<=175)return a.x+174;if(dz>=215&&dz<=265)return a.x+195;return a.x+a.width/2+20;}
 export function addRegions(scene,world){
+ addCoastalLife(scene,world);
  const mats=new Map(),mat=(c)=>{if(!mats.has(c))mats.set(c,new T.MeshStandardMaterial({color:c,roughness:.9,flatShading:true}));return mats.get(c);},cube=new T.BoxGeometry(1,1,1);
  function block(x,y,z,w,h,d,color){const m=new T.Mesh(cube,mat(color));m.position.set(x,y,z);m.scale.set(w,h,d);m.castShadow=m.receiveShadow=true;scene.add(m);return m;}
  for(const r of REGIONS.slice(1)){
  if(r.ocean)continue;
  const local=AIRPORTS.filter(a=>a.region===r.id&&a.type==='runway');
  const xs=[...new Set([...Array.from({length:131},(_,i)=>r.x-r.rx*1.12+i*r.rx*2.24/130),...(r.id==='peaks'?Array.from({length:69},(_,i)=>r.x+780+i*5):[]),...local.flatMap(a=>[a.x-a.width/2-35,a.x-a.width/2-30,a.x-a.width/2,a.x+a.width/2,a.x+a.width/2+20,a.x+a.width/2+25,a.x+50,a.x+72,a.x+174,a.x+179,a.x+195,a.x+200,...(a.id==='city'?[a.x+270,a.x+270]:[])])])].sort((a,b)=>a-b),zs=[...new Set([...Array.from({length:151},(_,i)=>r.z-r.rz*1.12+i*r.rz*2.24/150),...(r.id==='peaks'?Array.from({length:195},(_,i)=>r.z-720+i*5):[]),...local.flatMap(a=>[a.z-a.length/2-35,a.z-a.length/2-30,a.z-a.length/2,a.z+a.length/2,a.z+a.length/2+30,a.z+a.length/2+35,a.z-235,a.z-230,a.z+175,a.z+180,a.z+210,a.z+215,a.z+265,a.z+270,...(a.id==='city'?[a.z-855,a.z-850,a.z+850,a.z+855]:[])])])].sort((a,b)=>a-b),pos=[],idx=[],colors=[];
- for(const z of zs)for(const x of xs){const y=terrain(x,z,false),rad=regionRadius(r,x,z),slope=Math.hypot(terrain(x+4,z,false)-terrain(x-4,z,false),terrain(x,z+4,false)-terrain(x,z-4,false))/8;pos.push(x,y<=-2.99?-5:y,z);let color=new T.Color(r.color);if(rad>.9)color.lerp(new T.Color('#d7c69f'),Math.min(1,(rad-.9)*8));if(['alpine','peaks'].includes(r.id)){color.lerp(new T.Color('#747f7d'),Math.min(.8,slope*.55));if(y>620)color.lerp(new T.Color('#e5e8df'),Math.min(1,(y-620)/210));}if(r.id==='peaks')color.set('#e4eceb').lerp(new T.Color('#a9b9c2'),Math.min(.35,slope*.16));if(r.id==='desert'){color.lerp(new T.Color('#b58f67'),Math.min(.6,slope*.8));if(y>100)color.lerp(new T.Color('#a87858'),Math.min(.75,(y-100)/130));}if(local.some(a=>x>=a.x-a.width/2-30&&x<=apronRight(a,z)&&Math.abs(z-a.z)<=a.length/2+30))color.set('#929a98');colors.push(color.r,color.g,color.b);}
+ for(const z of zs)for(const x of xs){const y=terrain(x,z,false),rad=regionRadius(r,x,z),slope=Math.hypot(terrain(x+4,z,false)-terrain(x-4,z,false),terrain(x,z+4,false)-terrain(x,z-4,false))/8;pos.push(x,y<=-2.99?-5:y,z);let color=new T.Color(r.color);if(rad>.9&&y<10&&slope<.4)color.lerp(new T.Color('#d7c69f'),Math.min(1,(rad-.9)*8));if(['alpine','peaks'].includes(r.id)){color.lerp(new T.Color('#747f7d'),Math.min(.8,slope*.55));if(y>620)color.lerp(new T.Color('#e5e8df'),Math.min(1,(y-620)/210));}if(r.id==='peaks')color.set('#e4eceb').lerp(new T.Color('#a9b9c2'),Math.min(.35,slope*.16));if(r.id==='desert'){color.lerp(new T.Color('#b58f67'),Math.min(.6,slope*.8));if(y>100)color.lerp(new T.Color('#a87858'),Math.min(.75,(y-100)/130));}if(local.some(a=>x>=a.x-a.width/2-30&&x<=apronRight(a,z)&&Math.abs(z-a.z)<=a.length/2+30))color.set('#929a98');colors.push(color.r,color.g,color.b);}
  for(let j=0;j<zs.length-1;j++)for(let i=0;i<xs.length-1;i++){const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;if(local.some(a=>Math.abs(x-a.x)<a.width/2&&Math.abs(z-a.z)<a.length/2))continue;let a=j*xs.length+i,b=a+1,c=a+xs.length,d=c+1;idx.push(a,c,b,b,c,d);}
  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('color',new T.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();const land=new T.Mesh(geo,new T.MeshStandardMaterial({vertexColors:true,roughness:1}));land.receiveShadow=true;land.userData.coarse=true;scene.add(land);populateRegion(scene,world,r);
 
@@ -28,4 +30,4 @@ export function addRegions(scene,world){
  if(a.type==='runway'){for(let k=1;k<=6;k++){const z=a.z+a.length/2+k*30;const lamp=new T.Mesh(new T.SphereGeometry(1.2,6,4),new T.MeshBasicMaterial({color:'#f0e5ba',transparent:true}));lamp.position.set(a.x,Math.max(terrain(a.x,z),a.elevation)+1,z);scene.add(lamp);world.nightLights.push(lamp);}const pole=block(a.x+a.width,a.elevation+7,a.z+a.length*.35,.4,14,.4,'#e5dabc');const sock=new T.Mesh(new T.ConeGeometry(1.5,7,8),mat('#d97b53'));sock.rotation.z=-Math.PI/2;sock.position.set(pole.position.x+3,pole.position.y+6,pole.position.z);scene.add(sock);world.socks.push(sock);}
  }
 }
-export function updateRegionMotion(world,weather,dt){world.winterActivities?.forEach(activity=>activity.update(dt));const wind=weather.current.wind;world.windRotors.forEach(r=>r.rotation.z+=dt*(.2+wind*.15));world.socks.forEach(s=>{s.rotation.y=-weather.current.direction*Math.PI/180;s.rotation.z=-Math.PI/2+Math.sin(weather.time*2)*weather.current.gust*.015;});}
+export function updateRegionMotion(world,weather,dt){world.updateCoastal?.(dt);world.winterActivities?.forEach(activity=>activity.update(dt));const wind=weather.current.wind;world.windRotors.forEach(r=>r.rotation.z+=dt*(.2+wind*.15));world.socks.forEach(s=>{s.rotation.y=-weather.current.direction*Math.PI/180;s.rotation.z=-Math.PI/2+Math.sin(weather.time*2)*weather.current.gust*.015;});}

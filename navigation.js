@@ -1,16 +1,17 @@
-import {AIRPORTS,REGIONS} from './airports.js?v=04.9';
+import {AIRPORTS,REGIONS} from './airports.js?v=04.27';
 export const GPS_COLORS={target:'#b6a4eb',focus:'#75d6ac',airport:'#b9d2cc',text:'#ecf4f2'};
 export function mapPoint(f,target,scale,limit=76){const x=(target.x-f.x)/scale,z=(target.z-f.z)/scale,d=Math.hypot(x,z),k=d>limit?limit/d:1;return{x:x*k,z:z*k,outside:d>limit,distance:d*scale};}
 export class NavigationMap{
  constructor(canvas){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.zoom=1;this.scales=[18,70,250];this.names=['LOCAL','ILHA','ARQUIPÉLAGO'];}
  cycle(){this.zoom=(this.zoom+1)%this.scales.length;}
- draw(f,destination,focus,special){
+ draw(f,destination,focus,special,plan=[]){
  const ctx=this.ctx,s=this.scales[this.zoom],target=special||destination,C=GPS_COLORS;
  ctx.setTransform(this.canvas.width/190,0,0,this.canvas.height/190,0,0);ctx.clearRect(0,0,190,190);ctx.fillStyle='#142a30ed';ctx.fillRect(0,0,190,190);
  ctx.save();ctx.translate(95,95);ctx.beginPath();ctx.arc(0,0,81,0,Math.PI*2);ctx.clip();
  // Quiet land silhouettes leave enough contrast for the route and landing points.
- for(const r of REGIONS){if(r.ocean)continue;ctx.fillStyle='#36544f';ctx.strokeStyle='#607e73';ctx.lineWidth=.7;ctx.beginPath();ctx.ellipse((r.x-f.x)/s,(r.z-f.z)/s,r.rx/s,r.rz/s,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(this.zoom===2){const x=(r.x-f.x)/s,z=(r.z-f.z)/s+r.rz/s+7;if(Math.hypot(x,z)<72){ctx.fillStyle='#bdd6cd';ctx.font='5.5px sans-serif';ctx.textAlign='center';ctx.fillText(({aurora:'ESCOLA',winds:'VENTOS',metro:'METRÓPOLE',alpine:'ALPINA',peaks:'PICOS','aurora-snow':'AURORA',desert:'DESERTO'})[r.id]||r.name,x,z);}}}
+ for(const r of REGIONS){if(r.ocean)continue;ctx.fillStyle='#36544f';ctx.strokeStyle='#607e73';ctx.lineWidth=.7;ctx.beginPath();ctx.ellipse((r.x-f.x)/s,(r.z-f.z)/s,r.rx/s,r.rz/s,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(this.zoom===2){const x=(r.x-f.x)/s,z=(r.z-f.z)/s+r.rz/s+7;if(Math.hypot(x,z)<72){ctx.fillStyle='#bdd6cd';ctx.font='5.5px sans-serif';ctx.textAlign='center';ctx.fillText(({aurora:'ENSEADA',winds:'VENTOS',metro:'METRÓPOLE',alpine:'ALPINA',peaks:'PICOS','aurora-snow':'AURORA',desert:'DESERTO'})[r.id]||r.name,x,z);}}}
  ctx.strokeStyle='#d9ece519';ctx.lineWidth=.7;for(const radius of[30,60]){ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();}ctx.beginPath();ctx.moveTo(-81,0);ctx.lineTo(81,0);ctx.moveTo(0,-81);ctx.lineTo(0,81);ctx.stroke();
+ if(plan.length){ctx.strokeStyle='#e9f296';ctx.lineWidth=1.7;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(0,0);for(const p of plan)ctx.lineTo((p.x-f.x)/s,(p.z-f.z)/s);ctx.stroke();ctx.setLineDash([]);plan.forEach((p,i)=>{const x=(p.x-f.x)/s,z=(p.z-f.z)/s;if(Math.hypot(x,z)>78)return;ctx.fillStyle='#e9f296';ctx.beginPath();ctx.arc(x,z,2.5,0,Math.PI*2);ctx.fill();ctx.font='bold 7px sans-serif';ctx.fillText(String(i+1),x+4,z-4);});}
  if(target){const p=mapPoint(f,target,s);ctx.strokeStyle=C.target;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(p.x,p.z);ctx.stroke();ctx.setLineDash([]);}
  for(const a of AIRPORTS){const x=(a.x-f.x)/s,z=(a.z-f.z)/s;if(Math.hypot(x,z)>83)continue;ctx.save();ctx.translate(x,z);ctx.rotate(a.heading);ctx.fillStyle=a.id===destination?.id?C.target:a.id===focus?.id?C.focus:C.airport;
  if(a.type==='helipad'){ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.fillText('H',0,3);}else if(a.type==='carrier'){ctx.fillRect(-2,-5,4,10);}else ctx.fillRect(-1.3,-Math.max(3,a.length/s/2),2.6,Math.max(6,a.length/s));ctx.restore();}

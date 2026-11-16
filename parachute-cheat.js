@@ -1,6 +1,6 @@
-import {topCamera} from './top-camera.js?v=04.9';
+import {topCamera} from './top-camera.js?v=04.27';
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.9';
+import {terrain} from './geography.js?v=04.27';
 export const supportsParachute=config=>config.parachutists??(config.id==='skycourier'||!!config.helicopter);
 export class CheatWord{
  constructor(word='parachute'){this.word=word;this.reset();}
@@ -19,7 +19,7 @@ export class ParachuteCheat{
  constructor(scene){this.group=new T.Group();this.group.name='cargo-skydivers';scene.add(this.group);this.drops=[];this.cooldown=0;this.focus=null;}
  reset(){for(const p of this.drops){this.group.remove(p.g);const geos=new Set(),mats=new Set();p.g.traverse(o=>{if(o.geometry)geos.add(o.geometry);if(o.material)mats.add(o.material);});geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());}this.drops=[];this.cooldown=0;this.focus=null;this.surface=null;}
  jump(f,options={}){
-  if(!(options.enabled??supportsParachute(f.config))||f.ground||f.crashed||f.y-terrain(f.x,f.z)<65)return false;
+  if(!(options.enabled??supportsParachute(f.config))||f.ground||f.crashed||f.y-terrain(f.x,f.z)<(options.minAltitude??65))return false;
   if(this.focus||this.cooldown>0||this.drops.length>=6)return false;
   this.cooldown=4;
   const g=new T.Group(),body=new T.Group(),canopy=new T.Group();g.add(body,canopy);const mats=new Map();
@@ -42,15 +42,15 @@ export class ParachuteCheat{
   for(const p of expired){this.group.remove(p.g);const geos=new Set(),mats=new Set();p.g.traverse(o=>{if(o.geometry)geos.add(o.geometry);if(o.material)mats.add(o.material);});geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());}this.drops=this.drops.filter(p=>!expired.includes(p));
  }
  step(dt,input){this.cooldown=Math.max(0,this.cooldown-dt);
-  for(const p of this.drops){p.age+=dt;if(p.landed){p.landTime+=dt;if(p.support){p.g.position.x+=(p.support.vx||0)*dt;p.g.position.z+=(p.support.vz||0)*dt;}p.canopy.scale.y=Math.max(.03,1-p.landTime*.7);continue;}
+  for(const p of this.drops){p.age+=dt;if(p.snowJump)continue;if(p.landed){p.landTime+=dt;if(p.support){p.g.position.x+=(p.support.vx||0)*dt;p.g.position.z+=(p.support.vz||0)*dt;}p.canopy.scale.y=Math.max(.03,1-p.landTime*.7);continue;}
    const floor=terrain(p.g.position.x,p.g.position.z),controlled=p===this.focus;
    if(!controlled&&!p.opened&&(p.age>2.6||p.g.position.y-floor<45)){p.opened=true;p.canopy.scale.setScalar(.08);}
    const open=!!p.opened,roll=controlled?(input.roll||0):0,pitch=controlled?(input.pitch||0):0;
    p.canopy.visible=open;
    if(open){p.canopy.scale.setScalar(Math.min(1,p.canopy.scale.x+dt*1.8));p.vy+=(-4.2+pitch*.7-p.vy)*(1-Math.exp(-dt*3));}
    else p.vy=Math.max(-48,p.vy-9.81*dt);
-   if(p.mission&&open){p.heading+=roll*dt*.85;p.g.rotation.y=-p.heading;}
-   const speed=open?10:16,forward=p.mission&&open?(input.brake?1.5:8-pitch*5):-pitch*speed,side=p.mission&&open?0:roll*speed,response=open?1.6:.75;
+   if(controlled){p.heading+=((input.yaw||0)*1.2+(p.mission&&open?roll*.85:0))*dt;p.heading=Math.atan2(Math.sin(p.heading),Math.cos(p.heading));p.g.rotation.y=-p.heading;}
+   const speed=open?10:16,forward=p.mission&&open?(input.brake?1.5:(p.canopyCruise??8)-pitch*5):-pitch*speed,side=p.mission&&open?0:roll*speed,response=open?1.6:.75;
    const tx=Math.sin(p.heading)*forward+Math.cos(p.heading)*side,tz=-Math.cos(p.heading)*forward+Math.sin(p.heading)*side;
    p.vx+=(tx-p.vx)*(1-Math.exp(-dt*response));p.vz+=(tz-p.vz)*(1-Math.exp(-dt*response));
    p.body.rotation.x+=((open?pitch*.15:-Math.PI/2+pitch*.2)-p.body.rotation.x)*(1-Math.exp(-dt*5));p.body.rotation.z+=(roll*-.3-p.body.rotation.z)*(1-Math.exp(-dt*5));p.canopy.rotation.z=-roll*.1;p.limbs.forEach((m,i)=>m.rotation.x=Math.sin(p.age*5+i)*.15);

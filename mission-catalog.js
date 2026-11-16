@@ -1,5 +1,5 @@
 const main=[
- ['school','01 · Primeiro circuito','school','school','cessna','clear',12,'circuit','Decole, atravesse os dois arcos e pouse na escola.'],
+ ['school','01 · Primeiro circuito','school','school','cessna','clear',12,'circuit','Siga o plano no GPS: suba, complete quatro arcos, explore a Enseada e retorne ao aeroporto.'],
  ['winds','02 · Entrega aos Ventos','school','wind','cessna','coastal',11,null,'Leve a primeira entrega à pista costeira e corrija as rajadas.'],
  ['fog','03 · Manhã na metrópole','wind','city','cessna','fog',7,null,'Siga as luzes de aproximação e entregue a carga na metrópole.'],
  ['storm','04 · Frente de tempestade','city','alpine','cessna','storm',16,null,'Cruze a frente e pouse na pista curta e inclinada da base alpina.'],

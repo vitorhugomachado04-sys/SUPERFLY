@@ -1,18 +1,19 @@
-import {terrain} from './geography.js?v=04.9';
+import {CIRCUIT_POINTS,flightGate,orientGate,GATE_RADIUS} from './flight-plan.js?v=04.27';
+import {terrain} from './geography.js?v=04.27';
 import * as T from './three.js';
-import {airportById} from './airports.js?v=04.9';
-import {getAircraft} from './fleet.js?v=04.9';
-import {jetAircraft} from './jets.js?v=04.9';
-import {CrashEffect} from './crash.js?v=04.9';
+import {airportById} from './airports.js?v=04.27';
+import {getAircraft} from './fleet.js?v=04.27';
+import {jetAircraft} from './jets.js?v=04.27';
+import {CrashEffect} from './crash.js?v=04.27';
 export class SpecialMission{
  constructor(scene){this.scene=scene;this.group=new T.Group();scene.add(this.group);this.explosion=new CrashEffect(scene);this.reset();}
- reset(){for(const p of this.damageParts||[])this.scene.remove(p.m);for(const m of [...this.group.children]){this.group.remove(m);m.traverse(o=>{if(o.isSprite)o.material.dispose();if(o.isMesh){o.geometry.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});}this.explosion.reset();this.time=0;this.phase=0;this.done=false;this.triggered=false;this.hold=0;this.cooldown=0;this.drops=[];this.bullets=[];this.hits=0;this.message='';this.actionLabel='';this.target=null;this.truck=null;this.enemy=null;this.enemies=[];this.checkpointMade=false;this.damageParts=[];this.engineSmoke=[];}
+ reset(){for(const p of this.damageParts||[])this.scene.remove(p.m);for(const m of [...this.group.children]){this.group.remove(m);m.traverse(o=>{if(o.isSprite)o.material.dispose();if(o.isMesh){o.geometry.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});}this.explosion.reset();this.time=0;this.freeUntil=null;this.phase=0;this.done=false;this.triggered=false;this.hold=0;this.cooldown=0;this.drops=[];this.bullets=[];this.hits=0;this.message='';this.actionLabel='';this.target=null;this.points=null;this.truck=null;this.enemy=null;this.enemies=[];this.checkpointMade=false;this.damageParts=[];this.engineSmoke=[];}
  start(m){this.reset();this.kind=m.special;this.airport=airportById(m.to);this.done=!this.kind;for(let i=0;i<14;i++){const m=new T.Sprite(new T.SpriteMaterial({map:this.explosion.texture,color:i<10?'#4d5150':'#ee8b35',transparent:true,opacity:0,depthWrite:false}));this.group.add(m);this.engineSmoke.push(m);}this.origin=airportById(m.from);this.target={x:this.origin.x+700,z:this.origin.z,y:this.origin.elevation+280};if(this.kind==='circuit')this.target={x:0,y:160,z:-1500};
  if(['inspection','urgent','supply','rescue','escort'].includes(this.kind)){
   const o=this.origin;this.points=this.kind==='inspection'?[[o.x+580,o.z-1050],[o.x+765,o.z-670],[o.x+950,o.z-290]]:this.kind==='rescue'?[[-9870,-1100]]:[[o.x+1100,o.z-900]];
   if(this.kind==='urgent')this.points=[[o.x+2100,o.z+200]];
   this.points=this.points.map(([x,z])=>({x,z,y:terrain(x,z)+(this.kind==='rescue'?28:170)}));this.target={...this.points[0]};
-  this.marker=new T.Mesh(new T.TorusGeometry(this.kind==='rescue'?25:70,2,6,32),new T.MeshBasicMaterial({color:'#b6a4eb'}));this.marker.rotation.x=Math.PI/2;this.group.add(this.marker);
+  this.marker=flightGate();orientGate(this.marker,this.origin,this.target);this.group.add(this.marker);
   if(this.kind==='escort'){this.escort=new T.Group();this.box(0,0,0,1,1,6,'#e9e1c6',this.escort);this.box(0,.3,0,9,.15,1.4,'#9483bf',this.escort);this.group.add(this.escort);}
  }
 }
@@ -30,14 +31,19 @@ export class SpecialMission{
  if(!this.done){
   if(this.kind==='escort'){const p=this.points[0];this.target={x:p.x+Math.min(1400,this.time*22),y:p.y,z:p.z};this.escort.position.set(this.target.x,this.target.y,this.target.z);this.escort.rotation.y=-Math.PI/2;}
   const distance=Math.hypot(f.x-this.target.x,f.y-this.target.y,f.z-this.target.z);
-  if(this.kind==='inspection'||this.kind==='urgent'){this.message=this.kind==='inspection'?`Inspeção ${this.phase+1}/${this.points.length} · passe no marcador roxo.`:`Transporte urgente · ${Math.max(0,720-this.time).toFixed(0)} s · alcance o ponto de transferência.`;if(distance<150){this.phase++;if(this.phase>=this.points.length){this.done=true;this.target=null;this.message='Lia: objetivo cumprido. Retorne e pouse.';}else this.target={...this.points[this.phase]};}}
+  if(this.kind==='inspection'||this.kind==='urgent'){this.message=this.kind==='inspection'?`Inspeção ${this.phase+1}/${this.points.length} · passe no marcador roxo.`:`Transporte urgente · ${Math.max(0,720-this.time).toFixed(0)} s · alcance o ponto de transferência.`;if(distance<GATE_RADIUS){this.phase++;if(this.phase>=this.points.length){this.done=true;this.target=null;this.message='Lia: objetivo cumprido. Retorne e pouse.';}else this.target={...this.points[this.phase]};}}
   if(this.kind==='supply'){this.actionLabel='LANÇAR SUPRIMENTOS · X';this.message=distance<150?'Na zona · X para lançar.':'Alcance o marcador roxo na altitude indicada e lance com X.';}
   if(this.kind==='rescue'){this.hold=distance<45&&f.speed<5?this.hold+dt:0;this.message=`Busca no teleférico · mantenha pairado no marcador · ${Math.min(5,this.hold).toFixed(1)}/5 s`;if(this.hold>=5){this.done=true;this.target=null;this.message='Equipe recolhida. Pouse no heliponto do resort.';}}
   if(this.kind==='escort'){this.hold=distance<200?this.hold+dt:Math.max(0,this.hold-dt*.2);this.message=`Acompanhe a aeronave · ${Math.min(20,this.hold).toFixed(0)}/20 s · distância ${distance.toFixed(0)} m`;if(this.hold>=20){this.done=true;this.target=null;this.message='Visibilidade recuperada. Retorne à pista polar.';}}
  }
- this.marker.visible=!this.done;if(this.target)this.marker.position.set(this.target.x,this.target.y,this.target.z);
+ this.marker.visible=!this.done;if(this.target)orientGate(this.marker,this.phase?this.points[this.phase-1]:this.origin,this.target);
  }
- if(this.kind==='circuit'&&!this.done){const targets=[{x:0,y:160,z:-1500},{x:1100,y:240,z:-2300}];this.target=targets[this.phase];if(Math.hypot(f.x-this.target.x,f.y-this.target.y,f.z-this.target.z)<115)this.phase++;if(this.phase>=2){this.done=true;this.target=null;}this.message=this.done?'Circuito feito. Volte, pouse e pare em Aurora.':`Atravesse o arco ${this.phase+1}/2.`;}
+ if(this.kind==='circuit'&&!this.done){
+  this.target=CIRCUIT_POINTS[this.phase];
+  if(this.target&&Math.hypot(f.x-this.target.x,f.y-this.target.y,f.z-this.target.z)<GATE_RADIUS)this.phase++;
+  if(this.phase>=CIRCUIT_POINTS.length){this.target=null;this.freeUntil??=this.time+25;this.message='Lia: circuito completo! Pode sobrevoar a Enseada livremente por um momento.';if(this.time>=this.freeUntil){this.done=true;this.message='Lia: retorne ao Aeroporto Joselito Geraldo de Sousa. Siga a aproximação no GPS, pouse e pare.';}}
+  else{this.target=CIRCUIT_POINTS[this.phase];this.message=['Siga o plano no GPS · atravesse o primeiro arco a 160 m.','Suba para 240 m e curve à direita até o segundo arco.','Faça a curva de retorno pelo terceiro arco.','Siga pela ilha até o último arco do circuito.'][this.phase];}
+ }
  if(this.kind==='heli'&&!this.done){const targets=['roof-a','roof-b','city'];const dest=airportById(targets[this.phase]);this.target={...dest,y:dest.elevation};this.message=['Pouse na Torre Porto para recolher a encomenda.','Encomenda a bordo. Pouse no Hospital.','Entrega concluída. Retorne ao aeroporto da cidade.'][this.phase];if(f.ground&&f.airborne&&f.touch?.airport===dest.id&&f.speed<1.5){this.hold+=dt;if(this.hold>2){this.phase++;this.hold=0;if(this.phase>=3){this.done=true;this.target=null;}}}else this.hold=0;}
  if(this.kind==='birds'){
  if(!this.triggered&&f.airborne&&f.y>a.elevation+80&&this.time>12){this.triggered=true;f.engineHealth=[0,1];for(let i=0;i<12;i++)this.enemies.push(this.box(f.x-25+i*4,f.y+Math.sin(i)*3,f.z-20,1.3,.15,.5,'#374746'));}

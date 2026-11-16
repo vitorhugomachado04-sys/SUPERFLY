@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.9';
+import {terrain} from './geography.js?v=04.27';
 export class LettermanCode{
  constructor(onComplete){this.onComplete=onComplete;this.reset();}
  reset(){this.buffer='';this.last=0;}
@@ -44,7 +44,6 @@ export class LettermanBanner{
   for(const m of this.panels){m.scale.setScalar(1);m.position.set(0,0,0);m.rotation.set(0,0,0);}
 
  }
- camera(camera,f){if(!this.group.visible)return;const q=new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),-f.heading),origin=new T.Vector3(f.x,f.y,f.z);camera.position.copy(new T.Vector3(16+this.length*.55,9+this.length*.12,22+this.length*.7).multiplyScalar(Math.max(1,1/camera.aspect)).applyQuaternion(q).add(origin));camera.lookAt(new T.Vector3(0,0,6+this.length*.4).applyQuaternion(q).add(origin));}
  update(dt,f){this.group.visible=!!this.text.trim()&&f.config.id==='cessna'&&!f.crashed;if(!this.group.visible)return;this.time+=dt;this.tow.update(dt,f,this.length);this.group.position.set(f.x,f.y,f.z);this.group.rotation.set(0,0,0);
   const origin=this.group.position,nodes=this.tow.nodes,tension=this.tow.tension,cord=this.cord.geometry.attributes.position;
   for(let i=0;i<9;i++)cord.setXYZ(i,nodes[i].x-f.x,nodes[i].y-f.y,nodes[i].z-f.z);cord.needsUpdate=true;this.cord.geometry.computeBoundingSphere();

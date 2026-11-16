@@ -1,5 +1,5 @@
-import {airportById} from './airports.js?v=04.9';
-import {terrain} from './geography.js?v=04.9';
+import {airportById} from './airports.js?v=04.27';
+import {terrain} from './geography.js?v=04.27';
 const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
 export class CareerCruise{
  constructor(){this.active=false;}

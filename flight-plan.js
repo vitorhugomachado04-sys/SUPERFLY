@@ -1,0 +1,7 @@
+import * as T from './three.js';
+export const CIRCUIT_POINTS=[{x:0,y:160,z:-1500},{x:1100,y:240,z:-2300},{x:1500,y:250,z:-1000},{x:850,y:210,z:500}];
+export const GATE_RADIUS=78;
+export function flightGate(){const m=new T.Mesh(new T.TorusGeometry(GATE_RADIUS,3.2,8,64),new T.MeshBasicMaterial({color:'#b6a4eb',transparent:true,opacity:.95}));m.name='flight-plan-gate';return m;}
+export function orientGate(mesh,previous,target){mesh.position.set(target.x,target.y,target.z);const direction=new T.Vector3(target.x-previous.x,0,target.z-previous.z);if(direction.lengthSq()<1)direction.set(0,0,1);mesh.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),direction.normalize());}
+export function approachPoints(a,f){if(!a)return [];if(f&&Math.hypot(f.x-a.x,f.z-a.z)<900)return [a];if(a.type==='helipad')return [{x:a.x,y:a.elevation+70,z:a.z+150},a];return [{x:a.x-Math.sin(a.heading)*1200,y:a.elevation+130,z:a.z+Math.cos(a.heading)*1200},a];}
+export function missionPlan(m,special,f){if(!m)return [];const origin=special.origin,dest=special.airport;if(special.kind==='circuit'&&!special.done)return [...CIRCUIT_POINTS.slice(special.phase),...approachPoints(dest)];if(special.target&&!special.done){const remaining=special.points?.slice(special.phase)||[special.target];return [...remaining,...approachPoints(dest)];}return approachPoints(dest,f);}

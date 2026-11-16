@@ -1,17 +1,17 @@
-import {addDesertDetail} from './desert-detail.js?v=04.9';
-import {addWinterActivity,winterReserved} from './winter-activity.js?v=04.9';
-import {addSpaceport,oceanPlatform} from './spaceport.js?v=04.9';
-import {addControlTower} from './control-tower.js?v=04.9';
-import {addAlpineResort,resortReserved} from './alpine-resort.js?v=04.9';
-import {addWindRecreation} from './winds-recreation.js?v=04.9';
-import {windAmenityReserved,windFarmReserved} from './winds-layout.js?v=04.9';
-import {addVillages} from './villages.js?v=04.9';
-import {addRegionalAirportLife} from './airport-life.js?v=04.9';
-import {CITY_PLACES,cityLotAllowed,approachCorridor,residentialBelt} from './city-layout.js?v=04.9';
-import {addCityParks} from './city-parks.js?v=04.9';
+import {addDesertDetail} from './desert-detail.js?v=04.27';
+import {addWinterActivity,winterReserved} from './winter-activity.js?v=04.27';
+import {addSpaceport,oceanPlatform} from './spaceport.js?v=04.27';
+import {addControlTower} from './control-tower.js?v=04.27';
+import {addAlpineResort,resortReserved} from './alpine-resort.js?v=04.27';
+import {addWindRecreation} from './winds-recreation.js?v=04.27';
+import {windAmenityReserved,windFarmReserved,windTurbineReserved} from './winds-layout.js?v=04.27';
+import {addVillages} from './villages.js?v=04.27';
+import {addRegionalAirportLife} from './airport-life.js?v=04.27';
+import {CITY_PLACES,cityLotAllowed,approachCorridor,residentialBelt} from './city-layout.js?v=04.27';
+import {addCityParks} from './city-parks.js?v=04.27';
 import * as T from './three.js';
-import {AIRPORTS,airportById} from './airports.js?v=04.9';
-import {terrain,regionRadius} from './geography.js?v=04.9';
+import {AIRPORTS,airportById} from './airports.js?v=04.27';
+import {terrain,regionRadius} from './geography.js?v=04.27';
 // Deterministic scenery and instanced detail: revisiting never generates another city.
 export function populateRegion(scene,world,r){
  let roofGeo=new T.BufferGeometry();roofGeo.setAttribute('position',new T.Float32BufferAttribute([-.5,-.5,-.5,.5,-.5,-.5,0,.5,-.5,-.5,-.5,.5,.5,-.5,.5,0,.5,.5],3));roofGeo.setIndex([0,2,1,3,4,5,0,3,5,0,5,2,1,2,5,1,5,4,0,1,4,0,4,3]);roofGeo=roofGeo.toNonIndexed();roofGeo.computeVertexNormals();
@@ -32,7 +32,7 @@ export function populateRegion(scene,world,r){
  if(style%4===0&&h>100){item(x,base+h*.66,z,w+3,2,d+3,'#d3d4c6');item(x,base+h*.33,z,w+3,2,d+3,'#d3d4c6');}
  if(style%5===0&&h>180){const top=h*.19;item(x,base+h+top/2,z,w*.55,top,d*.55,color,'box',0,true);item(x,base+h+top+15,z,.9,30,.9,'#d0d7cd');obstacle(x,z,w*.6,d*.6,base+h+top+30);}
  }
- function trees(count,conifer=false){for(let i=0;i<count;i++){const cluster=i%4,centres=[[-850,-500],[800,500],[-750,1150],[950,-1000]],x=conifer?centres[cluster][0]+(rand(i*9+1)-.5)*1050:(rand(i*9+1)-.5)*r.rx*1.9,z=conifer?centres[cluster][1]+(rand(i*9+2)-.5)*1000:(rand(i*9+2)-.5)*r.rz*1.9,y=ground(x,z);if(((r.id==='peaks'&&resortReserved(x,z))||(r.id==='peaks'&&winterReserved(x,z)))||(r.id==='winds'&&(windAmenityReserved(x,z,20)||windFarmReserved(x,z,15)))||regionRadius(r,r.x+x,r.z+z)>.9||y<5||!clear(x,z,110)||(['alpine','peaks'].includes(r.id)&&y>650))continue;const h=8+rand(i*9+3)*14;item(x,y+h*.35,z,1.2,h*.7,1.2,'#685e47','cylinder');if(conifer){const snowy=r.id==='aurora-snow'||r.id==='peaks'||y>450;for(let tier=0;tier<3;tier++){const width=h*(.34-tier*.075),height=h*(.58-tier*.1),cy=y+h*(.42+tier*.24);item(x,cy,z,width,height,width,'#3e6259','cone');if(snowy)item(x,cy+height*.10,z,width*.92,height*.83,width*.92,tier%2?'#edf2ef':'#dce8e9','cone');}}else item(x,y+h*.7,z,h*.32,h*.95,h*.32,i%2?'#6c8c70':'#8aa376','cone');}}
+ function trees(count,conifer=false){for(let i=0;i<count;i++){const cluster=i%4,centres=[[-850,-500],[800,500],[-750,1150],[950,-1000]],x=conifer?centres[cluster][0]+(rand(i*9+1)-.5)*1050:(rand(i*9+1)-.5)*r.rx*1.9,z=conifer?centres[cluster][1]+(rand(i*9+2)-.5)*1000:(rand(i*9+2)-.5)*r.rz*1.9,y=ground(x,z);if(((r.id==='peaks'&&resortReserved(x,z))||(r.id==='peaks'&&winterReserved(x,z)))||(r.id==='winds'&&(windAmenityReserved(x,z,20)||windFarmReserved(x,z,15)||windTurbineReserved(x,z,20)))||regionRadius(r,r.x+x,r.z+z)>.9||y<5||!clear(x,z,110)||(['alpine','peaks'].includes(r.id)&&y>650))continue;const h=8+rand(i*9+3)*14;item(x,y+h*.35,z,1.2,h*.7,1.2,'#685e47','cylinder');if(conifer){const snowy=r.id==='aurora-snow'||r.id==='peaks'||y>450;for(let tier=0;tier<3;tier++){const width=h*(.34-tier*.075),height=h*(.58-tier*.1),cy=y+h*(.42+tier*.24);item(x,cy,z,width,height,width,'#3e6259','cone');if(snowy)item(x,cy+height*.10,z,width*.92,height*.83,width*.92,tier%2?'#edf2ef':'#dce8e9','cone');}}else item(x,y+h*.7,z,h*.32,h*.95,h*.32,i%2?'#6c8c70':'#8aa376','cone');}}
  function chalet(x,z,i){const samples=[ground(x-12,z-16),ground(x+12,z-16),ground(x-12,z+16),ground(x+12,z+16)],y=Math.max(...samples),low=Math.min(...samples)-2;if(y-low>12)return;item(x,(low+y)/2,z,20,y-low,27,'#8d9690');item(x,y+4,z,18,8,25,i%2?'#ae957c':'#958671');item(x,y+11,z,22,6,29,'#d6d5c7','roof');item(x,y+4,z+12.6,12,2,.25,'#e8d8a3');obstacle(x,z,20,27,y+14);}
 
  function airportBase(id){const a=airportById(id),x=a.x-r.x,z=a.z-r.z;
@@ -42,7 +42,7 @@ export function populateRegion(scene,world,r){
  if(r.id==='metro'){
   const palette=['#91aeb5','#78969e','#aabfc1','#bdb9aa','#c7c6b8','#718c9a'];let count=0,maxHeight=0;
   for(let row=0;row<47;row++)for(let col=0;col<53;col++){const i=row*53+col,x=-1900+col*73+(rand(i+4)-.5)*8,z=-1840+row*80+(rand(i+5)-.5)*8,w=38+rand(i+32)*16,d=40+rand(i+33)*18;
-   if(((r.id==='peaks'&&resortReserved(x,z))||(r.id==='peaks'&&winterReserved(x,z)))||(r.id==='winds'&&(windAmenityReserved(x,z,20)||windFarmReserved(x,z,15)))||regionRadius(r,r.x+x,r.z+z)>.91||!clear(x,z,65)||!cityLotAllowed(x,z,w+6,d+6))continue;
+   if(((r.id==='peaks'&&resortReserved(x,z))||(r.id==='peaks'&&winterReserved(x,z)))||(r.id==='winds'&&(windAmenityReserved(x,z,20)||windFarmReserved(x,z,15)||windTurbineReserved(x,z,20)))||regionRadius(r,r.x+x,r.z+z)>.91||!clear(x,z,65)||!cityLotAllowed(x,z,w+6,d+6))continue;
    const central=Math.exp(-((x-380)**2+(z+200)**2)/800000),h=26+rand(i+30)*95+central*(100+rand(i+31)*280);item(x,ground(x,z)+.06,z,66,.1,73,'#7d9291');building(x,z,w,d,h,palette[i%palette.length],i);count++;maxHeight=Math.max(maxHeight,h*1.19+30);
    // Shopfronts and awnings at street level, independent of tower height.
    if(i%3===0){item(x,ground(x,z)+4,z+d/2+.4,w*.8,4,.5,'#496775');item(x,ground(x,z)+6.5,z+d/2+2,w*.9,1,4,i%2?'#ba9276':'#9ba784');}
@@ -76,7 +76,9 @@ export function populateRegion(scene,world,r){
 
   world.cityInfo={buildings:count+8,houses,airportDistrict,park:CITY_PLACES.park,golf:CITY_PLACES.golf,stadium:CITY_PLACES.stadium,tallest:Math.round(Math.max(520,maxHeight))};
  }else if(r.id==='winds'){
-  trees(350);for(let i=0;i<14;i++){const x=380+(i%3)*185,z=-1050+Math.floor(i/3)*380,y=ground(x,z);if(y<4)continue;item(x,y+35,z,3,70,3,'#dce3d6','cylinder');const rotor=new T.Group();rotor.position.set(r.x+x,y+70,r.z+z);for(let k=0;k<3;k++){const pivot=new T.Group(),blade=new T.Mesh(new T.BoxGeometry(2.5,34,1.3),material('#e9ead8'));blade.position.y=17;pivot.rotation.z=k*Math.PI*2/3;pivot.add(blade);rotor.add(pivot);}scene.add(rotor);world.windRotors.push(rotor);obstacle(x,z,10,10,y+90);}
+  const cx=-800,cz=-650,cy=ground(cx,cz);item(cx,cy+8,cz,30,16,46,'#eee2c4');item(cx,cy+20,cz,34,10,50,'#997768','roof');item(cx,cy+19,cz+30,12,38,12,'#e6d8ba');item(cx,cy+42,cz+30,9,10,9,'#73818a','cone');item(cx,cy+49,cz+30,1,7,1,'#f4e5b9');item(cx,cy+50,cz+30,5,1,1,'#f4e5b9');obstacle(cx,cz,35,80,cy+53);
+  for(let i=0;i<60;i++){const a=i*2.399,d=65+(i%5)*12,x=cx+Math.cos(a)*d,z=cz+Math.sin(a)*d,y=ground(x,z);item(x,y+4,z,1,8,1,'#796b52');item(x,y+11,z,6,12,6,'#547d5b','ball');}
+  trees(900);for(let i=0;i<14;i++){const x=380+(i%3)*185,z=-1050+Math.floor(i/3)*380,y=ground(x,z);if(y<4)continue;item(x,y+35,z,3,70,3,'#dce3d6','cylinder');const rotor=new T.Group();rotor.position.set(r.x+x,y+70,r.z+z);for(let k=0;k<3;k++){const pivot=new T.Group(),blade=new T.Mesh(new T.BoxGeometry(2.5,34,1.3),material('#e9ead8'));blade.position.y=17;pivot.rotation.z=k*Math.PI*2/3;pivot.add(blade);rotor.add(pivot);}scene.add(rotor);world.windRotors.push(rotor);obstacle(x,z,10,10,y+90);}
   airportBase('wind');addSpaceport(scene,r.x+850,24,r.z+950,world.obstacles);oceanPlatform(scene,r.x+2300,r.z+950);world.obstacles.push({x:r.x+2300,z:r.z+950,w:96,d:96,top:8});
  }else if(['alpine','peaks','aurora-snow'].includes(r.id)){
   trees(2200,true);

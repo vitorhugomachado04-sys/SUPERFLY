@@ -1,6 +1,6 @@
 // One connected archipelago. Distances are metres; ~40 m/s light-plane cruise.
 export const REGIONS=[
- {id:'aurora',name:'Ilha Escola',x:0,z:0,rx:1820,rz:2275,color:'#9ab895',height:3},
+ {id:'aurora',name:'Ilha da Enseada',x:0,z:0,rx:1820,rz:2275,color:'#9ab895',height:3},
  {id:'winds',name:'Ilha dos Ventos',x:10000,z:-4000,rx:1250,rz:1750,color:'#89a596',height:16},
  {id:'metro',name:'Metrópole',x:5000,z:-10500,rx:2300,rz:2350,color:'#91a59b',height:8},
  {id:'alpine',name:'Frente Alpina',x:-5500,z:-10500,rx:1800,rz:2200,color:'#729182',height:190},
@@ -12,13 +12,13 @@ export const REGIONS=[
 const runway=(id,name,region,x,z,length,width,elevation,slope=0,surface='asfalto')=>({id,name,region,x,z,length,width,elevation,slope,surface,heading:0,type:'runway'});
 const localRunway=(id,name,region,dx,dz,length,width,elevation,slope=0,surface='asfalto')=>{const r=REGIONS.find(r=>r.id===region);return runway(id,name,region,r.x+dx,r.z+dz,length,width,elevation,slope,surface);};
 export const AIRPORTS=[
- {...localRunway('school-heli','Escola · Heliponto','aurora',-125,600,40,40,3),type:'helipad'},
- localRunway('school','Aurora · Escola','aurora',0,0,1700,62,3),
+ {...localRunway('school-heli','Enseada · Heliponto','aurora',-125,600,40,40,3),type:'helipad'},
+ localRunway('school','Aeroporto Joselito Geraldo de Sousa','aurora',0,0,1700,62,3),
  localRunway('wind','Ventos · Costa','winds',-200,0,1100,48,16),
  {...localRunway('wind-heli','Ventos · Heliponto da Vila','winds',100,-300,32,32,56),type:'helipad'},
  localRunway('city','Metrópole Internacional','metro',-1050,0,2300,76,8),
  {...localRunway('stadium','Panorama Arena · Gramado','metro',1280,-650,170,118,8.34),type:'helipad',customGeometry:true,surface:'grama'},
- {...localRunway('yacht','Panorama Yacht · Convés','metro',-2900,-1500,32,32,10),type:'helipad',customGeometry:true},
+ {...localRunway('yacht','Panorama Yacht · Convés','metro',-2900,-1500,32,32,10),type:'helipad',customGeometry:true,menuRegion:'ocean'},
  {...localRunway('roof-a','Torre Porto · H1','metro',550,350,36,36,240),type:'helipad'},
  {...localRunway('roof-b','Hospital · H2','metro',850,-350,36,36,155),type:'helipad'},
  {...localRunway('alpine-heli','Alpina · Heliponto','alpine',-300,450,40,40,220),type:'helipad'},

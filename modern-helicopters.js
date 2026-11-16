@@ -3,7 +3,7 @@ import * as T from './three.js';
 export function modernHelicopter(c){
  const airbus=c.id==='h145',g=new T.Group();g.name=airbus?'Airbus H145 · Executive':'Bell 407 · Executive';
  const mats=new Map(),paint=airbus?'#293b45':'#e5e1d5',trim=airbus?'#c5ad83':'#454e77',silver='#a9b6bb',glass='#234957';
- const mat=color=>{if(!mats.has(color))mats.set(color,new T.MeshStandardMaterial({color,metalness:color===glass?.65:.32,roughness:color===glass?.16:.37}));return mats.get(color);};
+ const mat=color=>{if(!mats.has(color))mats.set(color,new T.MeshStandardMaterial({color:airbus?'#30343a':color,metalness:color===glass?.65:.32,roughness:color===glass?.16:.37}));return mats.get(color);};
  const add=(geo,color,x=0,y=0,z=0,parent=g)=>{const m=new T.Mesh(geo,mat(color));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;parent.add(m);return m;};
  const box=(x,y,z,w,h,d,color,parent=g)=>add(new T.BoxGeometry(w,h,d),color,x,y,z,parent);
  const oval=(x,y,z,w,h,d,color)=>{const m=add(new T.SphereGeometry(1,24,16),color,x,y,z);m.scale.set(w,h,d);return m;};

@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {CITY_PLACES} from './city-layout.js?v=04.9';
+import {CITY_PLACES} from './city-layout.js?v=04.27';
 export function addCityParks({scene,r,item,ground,obstacle,rand,building}){
  const tree=(x,z,i)=>{const y=ground(x,z),h=8+rand(i)*7;item(x,y+h*.36,z,1,h*.72,1,'#756650','cylinder');item(x,y+h*.8,z,5+rand(i+1)*3,h*.45,5+rand(i+2)*3,['#567f64','#71996a','#89a977'][i%3],'ball');};
  const stripe=(x,z,w,d,color,y=.18)=>item(x,ground(x,z)+y,z,w,.08,d,color);
@@ -29,8 +29,8 @@ export function addCityParks({scene,r,item,ground,obstacle,rand,building}){
  }
  stripe(sx,sz,68,.7,'#eee9cc',.42);ring(sx,sz,9.15,9.15,'#eee9cc',.45);
  for(const side of [-1,1])for(const end of [-1,1]){const x=sx+side*148,z=sz+end*160;item(x,sy+26,z,2,52,2,'#6f858d');item(x,sy+52,z,14,5,2,'#ebe4bf');obstacle(x,z,14,3,sy+55);}
- item(sx,sy+28,sz-160,42,20,3,'#344d60');item(sx,sy+28,sz-158.4,37,15,.15,'#b9cfae');
- const board=document.createElement('canvas');board.width=640;board.height=240;const bc=board.getContext('2d');bc.fillStyle='#233e4c';bc.fillRect(0,0,640,240);bc.fillStyle='#e9edb9';bc.textAlign='center';bc.font='bold 32px sans-serif';bc.fillText('PANORAMA ARENA',320,52);bc.font='bold 112px monospace';bc.fillText('0 : 0',320,177);const texture=new T.CanvasTexture(board);texture.colorSpace=T.SRGBColorSpace;const score=new T.Mesh(new T.PlaneGeometry(37,15),new T.MeshBasicMaterial({map:texture}));score.position.set(r.x+sx,sy+28,r.z+sz-158.15);scene.add(score);
+ item(sx,sy+48,sz-160,42,20,3,'#344d60');item(sx,sy+48,sz-158.4,37,15,.15,'#b9cfae');
+ const board=document.createElement('canvas');board.width=640;board.height=240;const bc=board.getContext('2d');bc.fillStyle='#233e4c';bc.fillRect(0,0,640,240);bc.fillStyle='#e9edb9';bc.textAlign='center';bc.font='bold 32px sans-serif';bc.fillText('PANORAMA ARENA',320,52);bc.font='bold 112px monospace';bc.fillText('0 : 0',320,177);const texture=new T.CanvasTexture(board);texture.colorSpace=T.SRGBColorSpace;const score=new T.Mesh(new T.PlaneGeometry(37,15),new T.MeshBasicMaterial({map:texture,toneMapped:false}));score.position.set(r.x+sx,sy+48,r.z+sz-158.15);scene.add(score);score.name='arena-score-front';const back=score.clone();back.position.z=r.z+sz-161.7;back.rotation.y=Math.PI;back.name='arena-score-back';scene.add(back);for(const side of [-1,1])item(sx+side*17,sy+27,sz-160,1.8,42,1.8,'#526977');obstacle(sx,sz-160,42,3,sy+58);
  // Individual seat blocks, aisles, roof trusses and concourse entrances.
  for(const side of [-1,1]){
   for(let row=0;row<12;row++){
