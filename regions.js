@@ -1,8 +1,8 @@
-import {addCoastalLife} from './coastal-life.js?v=04.43';
+import {addCoastalLife} from './coastal-life.js?v=04.44';
 import * as T from './three.js';
-import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.43';
-import {populateRegion} from './region-detail.js?v=04.43';
-import {terrain,regionRadius} from './geography.js?v=04.43';
+import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.44';
+import {populateRegion} from './region-detail.js?v=04.44';
+import {terrain,regionRadius} from './geography.js?v=04.44';
 // The wide apron only surrounds the hangars; runway shoulders stay narrow.
 function apronRight(a,z){const dz=z-a.z;if(a.id==='city'&&dz>=-850&&dz<=850)return a.x+270;if(dz>=-230&&dz<=175)return a.x+174;if(dz>=215&&dz<=265)return a.x+195;return a.x+a.width/2+20;}
 export function addRegions(scene,world){

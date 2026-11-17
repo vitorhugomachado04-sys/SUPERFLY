@@ -1,7 +1,7 @@
-import {aircraft} from './aircraft.js?v=04.43';
+import {aircraft} from './aircraft.js?v=04.44';
 import * as T from './three.js';
-import {jetAircraft} from './jets.js?v=04.43';
-import {getAircraft} from './fleet.js?v=04.43';
+import {jetAircraft} from './jets.js?v=04.44';
+import {getAircraft} from './fleet.js?v=04.44';
 
 export const PARKING_STANDS=[-480,-410,-340,-270,-200];
 export function addAirportLife(scene,obstacles){

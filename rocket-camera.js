@@ -1,4 +1,4 @@
-import {topCamera} from './top-camera.js?v=04.43';
+import {topCamera} from './top-camera.js?v=04.44';
 import * as T from './three.js';
 export const ROCKET_CAMERAS=['CINEMÁTICA','ACOMPANHAMENTO','POUSO','DE CIMA'];
 // Smooth local offsets, not world positions: the camera must keep up with ascent.

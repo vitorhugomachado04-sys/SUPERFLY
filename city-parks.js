@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {CITY_PLACES} from './city-layout.js?v=04.43';
+import {CITY_PLACES} from './city-layout.js?v=04.44';
 export function addCityParks({scene,r,item,ground,obstacle,rand,building}){
  const tree=(x,z,i)=>{const y=ground(x,z),h=8+rand(i)*7;item(x,y+h*.36,z,1,h*.72,1,'#756650','cylinder');item(x,y+h*.8,z,5+rand(i+1)*3,h*.45,5+rand(i+2)*3,['#567f64','#71996a','#89a977'][i%3],'ball');};
  const stripe=(x,z,w,d,color,y=.18)=>item(x,ground(x,z)+y,z,w,.08,d,color);

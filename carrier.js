@@ -1,7 +1,7 @@
 import * as T from './three.js';
-import {airportById,runwayLocal} from './airports.js?v=04.43';
-import {jetAircraft} from './jets.js?v=04.43';
-import {getAircraft} from './fleet.js?v=04.43';
+import {airportById,runwayLocal} from './airports.js?v=04.44';
+import {jetAircraft} from './jets.js?v=04.44';
+import {getAircraft} from './fleet.js?v=04.44';
 export const CABLES=[-108,-92,-76,-60];
 export function hookPoint(f){const aft=f.config.length*.32+2.35*Math.cos(.58*f.hookExtension);return{x:f.x-Math.sin(f.heading)*aft,z:f.z+Math.cos(f.heading)*aft,y:f.y-.45-2.35*Math.sin(.58*f.hookExtension)-aft*Math.sin(f.pitch)};}
 export function stepArrestor(f,dt){

@@ -1,9 +1,9 @@
-import {stepArrestor} from './carrier.js?v=04.43';
-import {airportAt,surfaceHeight,spawnAt,airportById,helicopterDeparture} from './airports.js?v=04.43';
-import{terrain}from './geography.js?v=04.43';
-export{terrain}from './geography.js?v=04.43';
-import{C152}from './fleet.js?v=04.43';
-export{C152}from './fleet.js?v=04.43';
+import {stepArrestor} from './carrier.js?v=04.44';
+import {airportAt,surfaceHeight,spawnAt,airportById,helicopterDeparture} from './airports.js?v=04.44';
+import{terrain}from './geography.js?v=04.44';
+export{terrain}from './geography.js?v=04.44';
+import{C152}from './fleet.js?v=04.44';
+export{C152}from './fleet.js?v=04.44';
 export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const onRunway=(x,z)=>!!airportAt(x,z);
 export class Flight{

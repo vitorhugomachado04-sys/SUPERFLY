@@ -1,4 +1,4 @@
-import {airportById} from './airports.js?v=04.43';
+import {airportById} from './airports.js?v=04.44';
 export const LANDING_CHALLENGES=[
  {id:'carrier',name:'01 · Cabo no convés',aircraft:'naval',to:'carrier',weather:'coastal',hour:15,description:'Caça naval · Oceano · Capture um cabo e pare no convés.',hint:'Final 000. Trem baixo · F flaps · H gancho. Capture um cabo e pare.',height:92,distance:1800,speed:50,throttle:.35},
  {id:'rooftop',name:'02 · Tempestade sobre a cidade',aircraft:'bell47',to:'roof-a',weather:'storm',hour:18,description:'Superfly Bolha · Torre Porto · Chuva, rajadas e visibilidade reduzida.',hint:'Pouse no H da Torre Porto e permaneça parado por 3 s. Setas: deslocamento · W/S: coletivo.',height:85,distance:140,speed:6,throttle:.5,overrides:{wind:12,gust:7,turbulence:.85,visibility:1800,direction:75}},
