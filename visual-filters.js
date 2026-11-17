@@ -1,5 +1,5 @@
-import {VHSFilter} from './vhs.js?v=04.44';
-import {GameBoyFilter} from './gameboy.js?v=04.44';
+import {VHSFilter} from './vhs.js?v=04.45';
+import {GameBoyFilter} from './gameboy.js?v=04.45';
 
 export class VisualFilters {
  constructor(){this.mode='off';this.vhs=new VHSFilter();this.dmg=new GameBoyFilter();}

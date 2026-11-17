@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {airportById} from './airports.js?v=04.44';
+import {airportById} from './airports.js?v=04.45';
 export function buildYacht(scene,world){
  const a=airportById('yacht'),g=new T.Group();g.name='Panorama · superyacht';g.position.set(a.x,0,a.z-55);scene.add(g);const mats=new Map();
  const mat=color=>{if(!mats.has(color))mats.set(color,new T.MeshStandardMaterial({color,roughness:.35,metalness:.18}));return mats.get(color);};

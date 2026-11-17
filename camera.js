@@ -1,7 +1,7 @@
-import {topCamera} from './top-camera.js?v=04.44';
+import {topCamera} from './top-camera.js?v=04.45';
 import * as T from './three.js';
-import {terrain} from './physics.js?v=04.44';
-import {nearestAirport} from './airports.js?v=04.44';
+import {terrain} from './physics.js?v=04.45';
+import {nearestAirport} from './airports.js?v=04.45';
 export const CAMERA_MODES=['SEGUIR','CABINE','AEROPORTO','CINEMÁTICA','DE CIMA'];
 export const CINEMATIC_SHOTS=['Escolta lateral','Frente a frente','Asa esquerda','Vista do alto','Passagem','Traseira baixa','Órbita','Panorama','Diagonal frontal','Despedida'];
 export const nextCameraMode=mode=>(mode+1)%CAMERA_MODES.length;

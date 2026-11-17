@@ -1,42 +1,43 @@
-import {missionPlan,approachPoints} from './flight-plan.js?v=04.44';
-import {VisualFilters} from './visual-filters.js?v=04.44';
-import {readCameraShake,saveCameraShake} from './preferences.js?v=04.44';
-import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.44';
-import {GamepadUI} from './gamepad-ui.js?v=04.44';
-import {ChallengeAdventures} from './challenge-adventures.js?v=04.44';
-import {LettermanCode,LettermanBanner} from './letterman.js?v=04.44';
-import {AerobaticSmoke} from './aerobatic.js?v=04.44';
-import {FighterWeapons,armedAircraft} from './weapons.js?v=04.44';
-import {CheatWord,ParachuteCheat,supportsParachute} from './parachute-cheat.js?v=04.44';
-import {buildYacht} from './yacht.js?v=04.44';
-import {Soundtrack} from './music.js?v=04.44';
-import {RocketChallenge} from './rocket-challenge.js?v=04.44';
-import {LANDING_CHALLENGES,LandingChallenge} from './landing-challenges.js?v=04.44';
+import {SaveMenu} from './save-menu.js?v=04.45';
+import {missionPlan,approachPoints} from './flight-plan.js?v=04.45';
+import {VisualFilters} from './visual-filters.js?v=04.45';
+import {readCameraShake,saveCameraShake} from './preferences.js?v=04.45';
+import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.45';
+import {GamepadUI} from './gamepad-ui.js?v=04.45';
+import {ChallengeAdventures} from './challenge-adventures.js?v=04.45';
+import {LettermanCode,LettermanBanner} from './letterman.js?v=04.45';
+import {AerobaticSmoke} from './aerobatic.js?v=04.45';
+import {FighterWeapons,armedAircraft} from './weapons.js?v=04.45';
+import {CheatWord,ParachuteCheat,supportsParachute} from './parachute-cheat.js?v=04.45';
+import {buildYacht} from './yacht.js?v=04.45';
+import {Soundtrack} from './music.js?v=04.45';
+import {RocketChallenge} from './rocket-challenge.js?v=04.45';
+import {LANDING_CHALLENGES,LandingChallenge} from './landing-challenges.js?v=04.45';
 import * as T from './three.js';
-import {FLEET,getAircraft,C152} from './fleet.js?v=04.44';
-import {Flight,terrain,onRunway} from './physics.js?v=04.44';
-import {buildWorld} from './scene.js?v=04.44';
-import {addRegions,updateRegionMotion} from './regions.js?v=04.44';
-import {AIRPORTS,REGIONS,airportById,nearestAirport,arrivalSpawn} from './airports.js?v=04.44';
-import {aircraft} from './aircraft.js?v=04.44';
-import {controls} from './controls.js?v=04.44';
-import {Sound} from './audio.js?v=04.44';
-import {FlightCamera,bindCamera,nextCameraMode} from './camera.js?v=04.44';
-import {LandingSmoke} from './effects.js?v=04.44';
-import {CrashEffect} from './crash.js?v=04.44';
-import {MenuFlight} from './menu-flight.js?v=04.44';
-import {Weather,WeatherView,WEATHER} from './weather.js?v=04.44';
-import {NavigationMap} from './navigation.js?v=04.44';
-import {Career,MISSIONS,CATALOG,MAIN_IDS} from './career.js?v=04.44';
-import {buildCarrier,carrierGuidance} from './carrier.js?v=04.44';
-import {WorldStreaming} from './streaming.js?v=04.44';
-import {SpecialMission} from './specials.js?v=04.44';
+import {FLEET,getAircraft,C152} from './fleet.js?v=04.45';
+import {Flight,terrain,onRunway} from './physics.js?v=04.45';
+import {buildWorld} from './scene.js?v=04.45';
+import {addRegions,updateRegionMotion} from './regions.js?v=04.45';
+import {AIRPORTS,REGIONS,airportById,nearestAirport,arrivalSpawn} from './airports.js?v=04.45';
+import {aircraft} from './aircraft.js?v=04.45';
+import {controls} from './controls.js?v=04.45';
+import {Sound} from './audio.js?v=04.45';
+import {FlightCamera,bindCamera,nextCameraMode} from './camera.js?v=04.45';
+import {LandingSmoke} from './effects.js?v=04.45';
+import {CrashEffect} from './crash.js?v=04.45';
+import {MenuFlight} from './menu-flight.js?v=04.45';
+import {Weather,WeatherView,WEATHER} from './weather.js?v=04.45';
+import {NavigationMap} from './navigation.js?v=04.45';
+import {Career,MISSIONS,CATALOG,MAIN_IDS} from './career.js?v=04.45';
+import {buildCarrier,carrierGuidance} from './carrier.js?v=04.45';
+import {WorldStreaming} from './streaming.js?v=04.45';
+import {SpecialMission} from './specials.js?v=04.45';
 const $=s=>document.getElementById(s),scene=new T.Scene(),renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,logarithmicDepthBuffer:true});
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=.85;
 const camera=new T.PerspectiveCamera(50,innerWidth/innerHeight,.15,80000),world=buildWorld(scene,renderer.capabilities.getMaxAnisotropy());world.windRotors=[];world.socks=[];addRegions(scene,world);const carrier=buildCarrier(scene,world),yacht=buildYacht(scene,world),streaming=new WorldStreaming(scene,scene.children.filter(o=>!world.clouds.includes(o)));
 const flight=new Flight(),sound=new Sound(),flightCamera=new FlightCamera(camera),smoke=new LandingSmoke(scene),crash=new CrashEffect(scene),menuFlight=new MenuFlight(),weather=new Weather(),weatherView=new WeatherView(scene,world),navigation=new NavigationMap($('map')),career=new Career(),special=new SpecialMission(scene);
 flightCamera.obstacles=world.obstacles;flight.obstacles=world.obstacles;const models=new Map();let plane,mode='menu',paused=false,finished=false,cam=0,elapsed=0,last=0,acc=0,notice='',noticeUntil=0,startAirport='school',freeConfig=null,previousFlight=null,actionHeld=false,cameraShake=readCameraShake(window.localStorage),wasArrested=false;
-let lastCareerCheckpoint=0;
+let lastCareerCheckpoint=0,saveMenu;
 const landingChallenge=new LandingChallenge();let selectedChallenge='carrier';
 const rocketChallenge=new RocketChallenge(camera,sound,()=>{home();$('challenge-settings').hidden=false;});
 const spaceHide=document.createElement('button');spaceHide.id='space-hide';spaceHide.textContent='Hide UI';spaceHide.onclick=()=>toggleCleanScreen();rocketChallenge.root.querySelector('header>div:last-child').append(spaceHide);
@@ -64,7 +65,7 @@ function fireWeapon(missile){if(mode!=='menu'&&!paused&&!finished&&!flight.crash
 function touchVisible(){return matchMedia('(pointer:coarse)').matches||innerWidth<900;}
 function applicableControls(){$('tbrake').textContent='FREIO';const c=flight.config;document.body.classList.toggle('glider-flight',!!c.glider);$('hook-control').hidden=!c.naval;for(const id of ['tgear','gear-instrument'])$(id).hidden=!c.retractable;for(const id of ['tflap','flap-instrument'])$(id).hidden=!!c.helicopter;for(const id of ['tbrake','wheel-brake'])$(id).hidden=!!c.helicopter;$('engines').hidden=!c.twin;document.querySelector('.keyhelp').textContent=c.helicopter?'SETAS DESLOCAMENTO · W/S COLETIVO · Q/E GIRO · '+(c.retractable?'G TREM · ':'')+'C CÂMERAS · MOUSE DIREITO: OLHAR':'SETAS ATITUDE · W/S POTÊNCIA · Q/E LEME · ESPAÇO FREIO · F FLAPS · '+(c.retractable?'G TREM · ':'')+(c.naval?'H GANCHO · ':'')+'C CÂMERAS · MOUSE DIREITO: OLHAR';$('power-label').textContent=$('touch-power-label').textContent=c.helicopter?'COLETIVO':'POTÊNCIA';}
 function modal(label,title,text,resume=false,next=false){showCheats(false,false);$('cheats-open').hidden=!resume;setCleanScreen(false);$('arrival-extras').replaceChildren();$('arrival-extras').hidden=true;$('career-board-button').hidden=mode!=='career';$('campaign-return').hidden=mode!=='career'||!career.sideTrip;$('modal-label').textContent=label;$('modal-title').textContent=title;$('modal-text').textContent=text;$('resume').hidden=!resume;$('next-mission').hidden=!next;$('next-mission').textContent=!career.nextMission?'VOLTAR AO QUADRO →':'CONTINUAR VIAGEM →';$('modal').hidden=false;$('touch').hidden=true;}
-function togglePause(){if(mode==='menu'||(flight.crashed&&!parachute.focus)||finished)return;if(paused&&!$('cheats-menu').hidden){showCheats(false);return;}paused=!paused;if(paused)modal('VOO EM PAUSA','O céu pode esperar.','C alterna: seguir, cabine, aeroporto e cinemática · mouse direito ou arrasto no cenário para olhar · roda ajusta distância.',true);else resumeFlight();}
+function togglePause(){if(saveMenu?.isOpen){saveMenu.close();return;}if(mode==='menu'||(flight.crashed&&!parachute.focus)||finished)return;if(paused&&!$('cheats-menu').hidden){showCheats(false);return;}paused=!paused;if(paused)modal('VOO EM PAUSA','O céu pode esperar.','C alterna: seguir, cabine, aeroporto e cinemática · mouse direito ou arrasto no cenário para olhar · roda ajusta distância.',true);else resumeFlight();}
 function gear(){if(parachute.focus)return;if(mode==='menu'||paused||flight.crashed||finished)return;if(!flight.toggleGear())say('Trem bloqueado no solo',2);}
 function hook(){if(parachute.focus)return;if(mode==='menu'||paused||finished||flight.crashed||!flight.config.naval)return;if(flight.arrest&&!flight.arrest.stopped){say('Gancho sob tensão. Aguarde a parada.');return;}flight.hookTarget=1-flight.hookTarget;if(!flight.hookTarget){flight.arrest=null;flight.previousHook=null;}}
 $('hook-control').onclick=hook;
@@ -81,9 +82,9 @@ function trimActivity(){trimUntil=performance.now()+2200;}
 function orbitControls(on){if(mode==='menu'||rocketChallenge.active||parachute.focus){read.gamepad.lookMode=false;return;}read.gamepad.lookMode=on??!read.gamepad.lookMode;cam=0;}
 $('hide-controls').onclick=$('show-controls').onclick=toggleCleanScreen;$('trim-toggle').onclick=()=>{setMobileTools(false);trimActivity();};$('orbit-control').onclick=()=>orbitControls();
 const gamepadUI=new GamepadUI();
-function padMenu(){if(cleanScreen)return false;return rocketChallenge.active?(rocketChallenge.paused||!rocketChallenge.el('end').hidden):mode==='menu'||paused||finished||lettermanEditing;}
-function padBack(){if(rocketChallenge.active){if(rocketChallenge.paused)rocketChallenge.pause();else if(!rocketChallenge.el('end').hidden){rocketChallenge.stop();home();$('challenge-settings').hidden=false;}return;}if(lettermanEditing){closeLetterman();return;}if(paused){togglePause();return;}if(finished){home();return;}for(const id of ['options-settings','challenge-settings','flight-settings','career-board'])if(!$(id).hidden){$(id).hidden=true;syncPadMenu();return;}}
-function padAction(name,value){if(name==='hideControls'){toggleCleanScreen();return;}if(name==='orbit'){orbitControls(value);return;}
+function padMenu(){if(saveMenu?.isOpen)return true;if(cleanScreen)return false;return rocketChallenge.active?(rocketChallenge.paused||!rocketChallenge.el('end').hidden):mode==='menu'||paused||finished||lettermanEditing;}
+function padBack(){if(saveMenu?.isOpen){saveMenu.close();return;}if(rocketChallenge.active){if(rocketChallenge.paused)rocketChallenge.pause();else if(!rocketChallenge.el('end').hidden){rocketChallenge.stop();home();$('challenge-settings').hidden=false;}return;}if(lettermanEditing){closeLetterman();return;}if(paused){togglePause();return;}if(finished){home();return;}for(const id of ['options-settings','challenge-settings','flight-settings','career-board'])if(!$(id).hidden){$(id).hidden=true;syncPadMenu();return;}}
+function padAction(name,value){if(saveMenu?.isOpen){if(name==='navigate')navigatePadMenu(value);else if(name==='confirm')navigatePadMenu('confirm');else if(name==='back'||name==='pause')saveMenu.close();return;}if(name==='hideControls'){toggleCleanScreen();return;}if(name==='orbit'){orbitControls(value);return;}
  if(name==='navigate'){navigatePadMenu(value);return;}if(name==='confirm'){navigatePadMenu('confirm');return;}if(name==='back'){padBack();return;}
  if(rocketChallenge.active){if(name==='context'&&!rocketChallenge.paused)rocketChallenge.flight.action();if(name==='camera')rocketChallenge.cycleCamera();if(name==='pause')rocketChallenge.pause();if(name==='restart')rocketChallenge.start();return;}
  ({context:action,camera:cycleCamera,pause:togglePause,restart,gear,hook,smoke:toggleAcroSmoke,map:()=>navigation.cycle(),missile:()=>fireWeapon(true),flap:()=>{if(mode!=='menu'&&!paused&&!finished&&!parachute.focus&&!flight.config.helicopter)flight.flaps=(flight.flaps+1)%3;}})[name]?.();
@@ -105,7 +106,7 @@ function restart(){if(mode==='menu')return;if(mode==='challenge'){const cp=adven
 $('restart').onclick=restart;
 function refreshCareer(){const m=career.nextMission,started=career.hasStarted;$('first').textContent=started?'CONTINUE CAREER ↗':'NEW CAREER ↗';$('new-career').hidden=!started;$('career-summary').hidden=!started;$('career-summary').textContent=m?`${m.name} · ${getAircraft(m.aircraft).short}`:'Campanha concluída · Extras e replays no quadro';}
 function restoreCheckpoint(cp){if(!cp||flight.config.helicopter)return;Object.assign(flight,cp);flight.engineHealth=[...cp.engineHealth];flight.wind=weather;career.checkpoint=cp;if(cp.special){Object.assign(special,cp.special);if(special.done)special.target=null;}else{special.time=cp.specialTime??Math.max(0,cp.time-1);special.phase=cp.specialPhase||0;}flightCamera.reset();}
-function resumeCampaign(){const m=career.nextMission;if(!m){showBoard();return;}const cp=career.progress.resume?.id===m.id?career.progress.resume.checkpoint:null;startGame('career',MISSIONS.indexOf(m),career.progress.last);restoreCheckpoint(cp);}
+function resumeCampaign(){const m=career.nextMission;if(!m){showBoard();return;}const cp=career.progress.resume?.id===m.id?career.progress.resume.checkpoint:null;startGame('career',MISSIONS.indexOf(m),career.progress.last);restoreCheckpoint(cp);if(cp)career.persistCheckpoint(special);}
 function showBoard(){home();$('career-board').hidden=false;$('board-status').textContent=career.nextMission?`Lia · Próxima partida: ${airportById(career.nextMission.from).name}. Extras são opcionais.`:'Lia · Viagem concluída. Volte aos destinos ou escolha uma extra.';$('board-resume').hidden=!career.nextMission;$('mission-cards').replaceChildren();
  for(const m of CATALOG){const card=document.createElement('article');card.className='mission-card'+(career.nextMission?.id===m.id?' next':'');const img=document.createElement('img');img.src=m.cover;img.alt=m.name;img.loading='lazy';const title=document.createElement('strong');title.textContent=m.name;const detail=document.createElement('p');detail.textContent=`${m.aircraft?getAircraft(m.aircraft).name:'Aeronave em desenvolvimento'} · ${airportById(m.from).name} → ${airportById(m.to).name}`;const objective=document.createElement('p');objective.textContent=m.objectives[0];const status=document.createElement('small');const done=career.progress.completed.includes(m.id),available=career.available(m),rating=career.progress.ratings[MISSIONS.indexOf(m)];status.textContent=m.status==='planned'?'EM PREPARAÇÃO · '+m.reason:done?'CONCLUÍDA · '+(rating?.grade||''):available?'DISPONÍVEL':'BLOQUEADA · avance na campanha';const button=document.createElement('button');button.disabled=!available||m.status!=='playable';button.textContent=done?'REJOGAR →':m.kind==='extra'?'FAZER MISSÃO EXTRA →':'RETOMAR VIAGEM →';button.onclick=()=>{if(m.kind==='main'&&!done)resumeCampaign();else startGame('career',MISSIONS.indexOf(m));};card.append(img,title,detail,objective,status,button);$('mission-cards').append(card);}
 }
@@ -223,3 +224,6 @@ $('cheat-vhs').onclick=()=>toggleFilter('vhs');$('cheat-dmg').onclick=()=>toggle
 $('cheat-parachute').onclick=()=>{resumeFlight();cheatWord.onComplete();};
 $('cheat-letterman').onclick=()=>{resumeFlight();lettermanCode.onComplete();syncPadMenu();};
 const keys=document.createElement("div");keys.id="letterman-keys";for(const k of [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789","ESPAÇO","APAGAR"]){const b=document.createElement("button");b.textContent=k;b.onclick=()=>{const i=$("letterman-text");i.value=k==="APAGAR"?i.value.slice(0,-1):(i.value+(k==="ESPAÇO"?" ":k)).slice(0,160);letterman.setText(i.value);};keys.append(b);}$("letterman-editor").append(keys);
+
+saveMenu=new SaveMenu(career,()=>{home();$('save-open').focus();});
+$('save-open').onclick=$('save-pause').onclick=()=>saveMenu.open();

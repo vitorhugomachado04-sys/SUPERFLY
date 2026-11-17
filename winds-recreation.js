@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {WIND_PLACES} from './winds-layout.js?v=04.44';
+import {WIND_PLACES} from './winds-layout.js?v=04.45';
 export function addWindRecreation({scene,r,item,ground,obstacle,world}){
  function base(p,color){const samples=[];for(let z=-p.d/2;z<=p.d/2;z+=5)for(let x=-p.w/2;x<=p.w/2;x+=5)samples.push(ground(p.x+x,p.z+z));const y=Math.max(...samples)+.1,lo=Math.min(...samples);item(p.x,(lo+y)/2,p.z,p.w,y-lo,p.d,'#a5a393');item(p.x,y+.02,p.z,p.w,.04,p.d,color);return y+.06;}
  function line(x,y,z,w,d){item(x,y,z,w,.035,d,'#ded9bd');}

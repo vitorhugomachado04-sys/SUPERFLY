@@ -1,10 +1,10 @@
-import {CIRCUIT_POINTS,flightGate,orientGate,GATE_RADIUS} from './flight-plan.js?v=04.44';
-import {terrain} from './geography.js?v=04.44';
+import {CIRCUIT_POINTS,flightGate,orientGate,GATE_RADIUS} from './flight-plan.js?v=04.45';
+import {terrain} from './geography.js?v=04.45';
 import * as T from './three.js';
-import {airportById} from './airports.js?v=04.44';
-import {getAircraft} from './fleet.js?v=04.44';
-import {jetAircraft} from './jets.js?v=04.44';
-import {CrashEffect} from './crash.js?v=04.44';
+import {airportById} from './airports.js?v=04.45';
+import {getAircraft} from './fleet.js?v=04.45';
+import {jetAircraft} from './jets.js?v=04.45';
+import {CrashEffect} from './crash.js?v=04.45';
 export class SpecialMission{
  constructor(scene){this.scene=scene;this.group=new T.Group();scene.add(this.group);this.explosion=new CrashEffect(scene);this.reset();}
  reset(){for(const p of this.damageParts||[])this.scene.remove(p.m);for(const m of [...this.group.children]){this.group.remove(m);m.traverse(o=>{if(o.isSprite)o.material.dispose();if(o.isMesh){o.geometry.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});}this.explosion.reset();this.time=0;this.freeUntil=null;this.phase=0;this.done=false;this.triggered=false;this.hold=0;this.cooldown=0;this.drops=[];this.bullets=[];this.hits=0;this.message='';this.actionLabel='';this.target=null;this.points=null;this.truck=null;this.marker=null;this.enemy=null;this.enemies=[];this.checkpointMade=false;this.damageParts=[];this.engineSmoke=[];}

@@ -32,7 +32,7 @@ export class GamepadInput{
 }
 const menuFocus=new WeakMap();let lastMenu=null;
 export function syncPadMenu(){
- const root=['options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
+ const root=['save-menu','options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
  if(!root)return null;
  if(root!==lastMenu){if(lastMenu?.contains(document.activeElement))menuFocus.set(lastMenu,document.activeElement);const saved=menuFocus.get(root);if(saved?.isConnected&&saved.getClientRects().length)saved.focus({preventScroll:true});else [...root.querySelectorAll('button:not([disabled]),select:not([disabled]),input:not([disabled])')].find(e=>e.getClientRects().length)?.focus({preventScroll:true});lastMenu=root;}return root;
 }

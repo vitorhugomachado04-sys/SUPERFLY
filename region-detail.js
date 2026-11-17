@@ -1,17 +1,17 @@
-import {addDesertDetail} from './desert-detail.js?v=04.44';
-import {addWinterActivity,winterReserved} from './winter-activity.js?v=04.44';
-import {addSpaceport,oceanPlatform} from './spaceport.js?v=04.44';
-import {addControlTower} from './control-tower.js?v=04.44';
-import {addAlpineResort,resortReserved} from './alpine-resort.js?v=04.44';
-import {addWindRecreation} from './winds-recreation.js?v=04.44';
-import {windAmenityReserved,windFarmReserved,windTurbineReserved} from './winds-layout.js?v=04.44';
-import {addVillages} from './villages.js?v=04.44';
-import {addRegionalAirportLife} from './airport-life.js?v=04.44';
-import {CITY_PLACES,cityLotAllowed,approachCorridor,residentialBelt} from './city-layout.js?v=04.44';
-import {addCityParks} from './city-parks.js?v=04.44';
+import {addDesertDetail} from './desert-detail.js?v=04.45';
+import {addWinterActivity,winterReserved} from './winter-activity.js?v=04.45';
+import {addSpaceport,oceanPlatform} from './spaceport.js?v=04.45';
+import {addControlTower} from './control-tower.js?v=04.45';
+import {addAlpineResort,resortReserved} from './alpine-resort.js?v=04.45';
+import {addWindRecreation} from './winds-recreation.js?v=04.45';
+import {windAmenityReserved,windFarmReserved,windTurbineReserved} from './winds-layout.js?v=04.45';
+import {addVillages} from './villages.js?v=04.45';
+import {addRegionalAirportLife} from './airport-life.js?v=04.45';
+import {CITY_PLACES,cityLotAllowed,approachCorridor,residentialBelt} from './city-layout.js?v=04.45';
+import {addCityParks} from './city-parks.js?v=04.45';
 import * as T from './three.js';
-import {AIRPORTS,airportById} from './airports.js?v=04.44';
-import {terrain,regionRadius} from './geography.js?v=04.44';
+import {AIRPORTS,airportById} from './airports.js?v=04.45';
+import {terrain,regionRadius} from './geography.js?v=04.45';
 // Deterministic scenery and instanced detail: revisiting never generates another city.
 export function populateRegion(scene,world,r){
  let roofGeo=new T.BufferGeometry();roofGeo.setAttribute('position',new T.Float32BufferAttribute([-.5,-.5,-.5,.5,-.5,-.5,0,.5,-.5,-.5,-.5,.5,.5,-.5,.5,0,.5,.5],3));roofGeo.setIndex([0,2,1,3,4,5,0,3,5,0,5,2,1,2,5,1,5,4,0,1,4,0,4,3]);roofGeo=roofGeo.toNonIndexed();roofGeo.computeVertexNormals();

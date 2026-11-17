@@ -1,6 +1,6 @@
 import * as T from './three.js';
-import {cloudTexture} from './clouds.js?v=04.44';
-import {terrain} from './geography.js?v=04.44';
+import {cloudTexture} from './clouds.js?v=04.45';
+import {terrain} from './geography.js?v=04.45';
 export const armedAircraft=c=>c.id==='fighter'||c.id==='naval';
 function obstacleHit(a,b,o){
  let enter=0,exit=1;for(const [axis,min,max] of [['x',o.x-o.w/2,o.x+o.w/2],['y',-Infinity,o.top],['z',o.z-o.d/2,o.z+o.d/2]]){const d=b[axis]-a[axis];if(Math.abs(d)<1e-8){if(a[axis]<min||a[axis]>max)return null;}else{const t1=(min-a[axis])/d,t2=(max-a[axis])/d;enter=Math.max(enter,Math.min(t1,t2));exit=Math.min(exit,Math.max(t1,t2));if(enter>exit)return null;}}return a.clone().lerp(b,enter);

@@ -1,6 +1,6 @@
-import {WaterCrash,WATER_LEVEL} from './water-crash.js?v=04.44';
+import {WaterCrash,WATER_LEVEL} from './water-crash.js?v=04.45';
 import * as T from './three.js';
-import {terrain} from './physics.js?v=04.44';
+import {terrain} from './physics.js?v=04.45';
 export class CrashEffect{
  constructor(scene){this.scene=scene;this.group=new T.Group();scene.add(this.group);this.center=new T.Vector3();this.reset();
  const n=32,data=new Uint8Array(n*n*4);for(let y=0;y<n;y++)for(let x=0;x<n;x++){let i=(y*n+x)*4,r=Math.hypot((x-15.5)/16,(y-15.5)/16);data[i]=data[i+1]=data[i+2]=255;data[i+3]=Math.round(Math.max(0,1-r*r)**2*255);}this.texture=new T.DataTexture(data,n,n);this.texture.needsUpdate=true;

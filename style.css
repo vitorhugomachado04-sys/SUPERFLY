@@ -168,3 +168,10 @@ body.glider-flight .instruments .power,body.glider-flight #touch .throttle{displ
 @media(max-width:480px){.cheat-list{grid-template-columns:1fr}#modal>div{padding:20px}#modal .cheat-option{padding:12px}}
 
 #modal>div{max-height:95vh;overflow:auto}
+
+#save-open{font-size:10px;padding:10px 15px;margin-top:8px}
+#save-menu{position:fixed;inset:0;z-index:200;background:#162c3ee8;backdrop-filter:blur(8px);display:grid;place-items:center;padding:20px}
+.save-panel{width:min(640px,100%);max-height:90dvh;overflow:auto;padding:26px;background:#173039;border:1px solid #f6f3df66}.save-panel h2{font-size:32px;margin:0}.save-panel p{line-height:1.6}.save-panel small{font-size:10px;letter-spacing:2px;color:var(--lime)}
+.save-summary{border-left:3px solid var(--purple);background:#ffffff08;padding:12px 16px;margin:12px 0 20px}.save-summary p{margin:4px 0;font-size:12px}.save-summary p:first-child{font-size:17px;font-weight:700}
+#save-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}#save-menu button:disabled{opacity:.45;cursor:default}#save-menu button:focus-visible{outline:3px solid var(--lime);outline-offset:2px}#save-status{color:var(--lime);min-height:20px}#save-preview button{margin:6px 4px 0 0}#save-filename{overflow-wrap:anywhere}.save-note{font-size:11px;opacity:.75;margin-bottom:0}
+@media(max-width:520px){#save-menu{padding:12px}.save-panel{padding:18px}.save-panel h2{font-size:26px}#save-actions{grid-template-columns:1fr}#save-menu button{padding:12px;font-size:10px}}

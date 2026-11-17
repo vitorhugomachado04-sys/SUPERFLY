@@ -1,10 +1,10 @@
-import {airportById} from './airports.js?v=04.44';
-import {topCamera} from './top-camera.js?v=04.44';
+import {airportById} from './airports.js?v=04.45';
+import {topCamera} from './top-camera.js?v=04.45';
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.44';
-import {buildYacht} from './yacht.js?v=04.44';
-import {aircraft} from './aircraft.js?v=04.44';
-import {getAircraft} from './fleet.js?v=04.44';
+import {terrain} from './geography.js?v=04.45';
+import {buildYacht} from './yacht.js?v=04.45';
+import {aircraft} from './aircraft.js?v=04.45';
+import {getAircraft} from './fleet.js?v=04.45';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const ZERO={pitch:0,roll:0,yaw:0,power:0,brake:false};
 export class ChallengeAdventures{
