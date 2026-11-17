@@ -17,6 +17,7 @@ export const AIRPORTS=[
  localRunway('wind','Ventos · Costa','winds',-200,0,1100,48,16),
  {...localRunway('wind-heli','Ventos · Heliponto da Vila','winds',100,-300,32,32,56),type:'helipad'},
  localRunway('city','Metrópole Internacional','metro',-1050,0,2300,76,8),
+ {...localRunway('city-heli','Metrópole Internacional · Heliponto','metro',-1150,850,40,40,8),type:'helipad'},
  {...localRunway('stadium','Panorama Arena · Gramado','metro',1280,-650,170,118,8.34),type:'helipad',customGeometry:true,surface:'grama'},
  {...localRunway('yacht','Panorama Yacht · Convés','metro',-2900,-1500,32,32,10),type:'helipad',customGeometry:true,menuRegion:'ocean'},
  {...localRunway('roof-a','Torre Porto · H1','metro',550,350,36,36,240),type:'helipad'},

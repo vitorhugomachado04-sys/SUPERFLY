@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.27';
+import {terrain} from './geography.js?v=04.43';
 export class LettermanCode{
  constructor(onComplete){this.onComplete=onComplete;this.reset();}
  reset(){this.buffer='';this.last=0;}

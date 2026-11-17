@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {cloudTexture} from './clouds.js?v=04.27';
+import {cloudTexture} from './clouds.js?v=04.43';
 const clamp=v=>Math.max(0,Math.min(1,v));
 export class RocketImpact{
  constructor(scene){

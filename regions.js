@@ -1,8 +1,8 @@
-import {addCoastalLife} from './coastal-life.js?v=04.27';
+import {addCoastalLife} from './coastal-life.js?v=04.43';
 import * as T from './three.js';
-import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.27';
-import {populateRegion} from './region-detail.js?v=04.27';
-import {terrain,regionRadius} from './geography.js?v=04.27';
+import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.43';
+import {populateRegion} from './region-detail.js?v=04.43';
+import {terrain,regionRadius} from './geography.js?v=04.43';
 // The wide apron only surrounds the hangars; runway shoulders stay narrow.
 function apronRight(a,z){const dz=z-a.z;if(a.id==='city'&&dz>=-850&&dz<=850)return a.x+270;if(dz>=-230&&dz<=175)return a.x+174;if(dz>=215&&dz<=265)return a.x+195;return a.x+a.width/2+20;}
 export function addRegions(scene,world){
@@ -12,14 +12,24 @@ export function addRegions(scene,world){
  for(const r of REGIONS.slice(1)){
  if(r.ocean)continue;
  const local=AIRPORTS.filter(a=>a.region===r.id&&a.type==='runway');
- const xs=[...new Set([...Array.from({length:131},(_,i)=>r.x-r.rx*1.12+i*r.rx*2.24/130),...(r.id==='peaks'?Array.from({length:69},(_,i)=>r.x+780+i*5):[]),...local.flatMap(a=>[a.x-a.width/2-35,a.x-a.width/2-30,a.x-a.width/2,a.x+a.width/2,a.x+a.width/2+20,a.x+a.width/2+25,a.x+50,a.x+72,a.x+174,a.x+179,a.x+195,a.x+200,...(a.id==='city'?[a.x+270,a.x+270]:[])])])].sort((a,b)=>a-b),zs=[...new Set([...Array.from({length:151},(_,i)=>r.z-r.rz*1.12+i*r.rz*2.24/150),...(r.id==='peaks'?Array.from({length:195},(_,i)=>r.z-720+i*5):[]),...local.flatMap(a=>[a.z-a.length/2-35,a.z-a.length/2-30,a.z-a.length/2,a.z+a.length/2,a.z+a.length/2+30,a.z+a.length/2+35,a.z-235,a.z-230,a.z+175,a.z+180,a.z+210,a.z+215,a.z+265,a.z+270,...(a.id==='city'?[a.z-855,a.z-850,a.z+850,a.z+855]:[])])])].sort((a,b)=>a-b),pos=[],idx=[],colors=[];
- for(const z of zs)for(const x of xs){const y=terrain(x,z,false),rad=regionRadius(r,x,z),slope=Math.hypot(terrain(x+4,z,false)-terrain(x-4,z,false),terrain(x,z+4,false)-terrain(x,z-4,false))/8;pos.push(x,y<=-2.99?-5:y,z);let color=new T.Color(r.color);if(rad>.9&&y<10&&slope<.4)color.lerp(new T.Color('#d7c69f'),Math.min(1,(rad-.9)*8));if(['alpine','peaks'].includes(r.id)){color.lerp(new T.Color('#747f7d'),Math.min(.8,slope*.55));if(y>620)color.lerp(new T.Color('#e5e8df'),Math.min(1,(y-620)/210));}if(r.id==='peaks')color.set('#e4eceb').lerp(new T.Color('#a9b9c2'),Math.min(.35,slope*.16));if(r.id==='desert'){color.lerp(new T.Color('#b58f67'),Math.min(.6,slope*.8));if(y>100)color.lerp(new T.Color('#a87858'),Math.min(.75,(y-100)/130));}if(local.some(a=>x>=a.x-a.width/2-30&&x<=apronRight(a,z)&&Math.abs(z-a.z)<=a.length/2+30))color.set('#929a98');colors.push(color.r,color.g,color.b);}
+ // Fine sampling and a submerged margin keep the coastline continuous at every angle.
+ const nx=Math.ceil(r.rx*2.32/20),nz=Math.ceil(r.rz*2.32/20);
+ const xs=[...new Set([...Array.from({length:nx+1},(_,i)=>r.x-r.rx*1.16+i*r.rx*2.32/nx),...(r.id==='peaks'?Array.from({length:69},(_,i)=>r.x+780+i*5):[]),...local.flatMap(a=>[a.x-a.width/2-35,a.x-a.width/2-30,a.x-a.width/2,a.x+a.width/2,a.x+a.width/2+20,a.x+a.width/2+25,a.x+50,a.x+72,a.x+174,a.x+179,a.x+195,a.x+200,...(a.id==='city'?[a.x+270,a.x+270]:[])])])].sort((a,b)=>a-b),zs=[...new Set([...Array.from({length:nz+1},(_,i)=>r.z-r.rz*1.16+i*r.rz*2.32/nz),...(r.id==='peaks'?Array.from({length:195},(_,i)=>r.z-720+i*5):[]),...local.flatMap(a=>[a.z-a.length/2-35,a.z-a.length/2-30,a.z-a.length/2,a.z+a.length/2,a.z+a.length/2+30,a.z+a.length/2+35,a.z-235,a.z-230,a.z+175,a.z+180,a.z+210,a.z+215,a.z+265,a.z+270,...(a.id==='city'?[a.z-855,a.z-850,a.z+850,a.z+855]:[])])])].sort((a,b)=>a-b),pos=[],idx=[],colors=[];
+ for(const z of zs)for(const x of xs){const y=terrain(x,z,false),rad=regionRadius(r,x,z),slope=Math.hypot(terrain(x+4,z,false)-terrain(x-4,z,false),terrain(x,z+4,false)-terrain(x,z-4,false))/8;pos.push(x,y,z);let color=new T.Color(r.color);if(rad>.9&&y<10&&slope<.4)color.lerp(new T.Color('#d7c69f'),Math.min(1,(rad-.9)*8));if(['alpine','peaks'].includes(r.id)){color.lerp(new T.Color('#747f7d'),Math.min(.8,slope*.55));if(y>620)color.lerp(new T.Color('#e5e8df'),Math.min(1,(y-620)/210));}if(r.id==='peaks')color.set('#e4eceb').lerp(new T.Color('#a9b9c2'),Math.min(.35,slope*.16));if(r.id==='desert'){color.lerp(new T.Color('#b58f67'),Math.min(.6,slope*.8));if(y>100)color.lerp(new T.Color('#a87858'),Math.min(.75,(y-100)/130));}if(local.some(a=>x>=a.x-a.width/2-30&&x<=apronRight(a,z)&&Math.abs(z-a.z)<=a.length/2+30))color.set('#929a98');colors.push(color.r,color.g,color.b);}
  for(let j=0;j<zs.length-1;j++)for(let i=0;i<xs.length-1;i++){const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;if(local.some(a=>Math.abs(x-a.x)<a.width/2&&Math.abs(z-a.z)<a.length/2))continue;let a=j*xs.length+i,b=a+1,c=a+xs.length,d=c+1;idx.push(a,c,b,b,c,d);}
- const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('color',new T.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();const land=new T.Mesh(geo,new T.MeshStandardMaterial({vertexColors:true,roughness:1}));land.receiveShadow=true;land.userData.coarse=true;scene.add(land);populateRegion(scene,world,r);
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('color',new T.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();const land=new T.Mesh(geo,new T.MeshStandardMaterial({vertexColors:true,roughness:1}));land.name=`terrain-${r.id}`;land.receiveShadow=true;land.userData.coarse=true;scene.add(land);populateRegion(scene,world,r);
 
  }
  for(const a of AIRPORTS){
  if(a.type==='carrier'||a.customGeometry)continue;
+ if(a.id==='city-heli'){
+  block(a.x,7.65,a.z,58,.5,58,'#d6d4c6');
+  for(const side of [-1,1]){block(a.x+side*25,8.02,a.z,1,.1,48,'#6a659e');block(a.x,8.02,a.z+side*25,48,.1,1,'#6a659e');}
+  // Service equipment stays outside the rotor-clear landing square.
+  block(a.x-33,9,a.z-20,4,2,7,'#6a659e');block(a.x-33,10.2,a.z-20,4.2,.4,7.2,'#f4f4ef');
+  world.obstacles.push({x:a.x-33,z:a.z-20,w:5,d:8,top:10.5});
+ }
+
  if(a.id!=='school'){
  const cv=document.createElement('canvas');cv.width=256;cv.height=a.type==='helipad'?256:2048;const ctx=cv.getContext('2d');ctx.fillStyle=a.type==='helipad'?'#4e746c':a.surface==='terra'?'#a88b67':'#46555e';ctx.fillRect(0,0,cv.width,cv.height);ctx.strokeStyle='#ede8c8';ctx.fillStyle='#ede8c8';ctx.lineWidth=5;
  if(a.type==='helipad'){ctx.beginPath();ctx.arc(128,128,96,0,7);ctx.stroke();ctx.font='bold 145px sans-serif';ctx.textAlign='center';ctx.fillText('H',128,180);}else{ctx.setLineDash([45,50]);ctx.beginPath();ctx.moveTo(128,60);ctx.lineTo(128,1988);ctx.stroke();ctx.setLineDash([]);for(const y of [90,1910])for(let x=25;x<240;x+=30)ctx.fillRect(x,y,10,35);ctx.font='bold 58px sans-serif';ctx.fillText('36',93,1850);ctx.fillText('18',93,220);}

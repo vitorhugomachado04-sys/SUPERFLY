@@ -1,5 +1,5 @@
-import {airportById,airportAt,arrivalSpawn} from './airports.js?v=04.27';
-import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.27';
+import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.43';
+import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.43';
 export {MISSIONS,MAIN_IDS,CATALOG};
 const KEY='superfly-career-v3',LEGACY='superfly-career-v2';
 const oldIds=['school','winds','fog','heli','birds','gear','storm','peaks','aurora','desert','jump','base','intercept','carrier'];
@@ -16,9 +16,9 @@ export class Career{
  if(!this.sideTrip)this.progress.resume={id:this.mission.id,checkpoint:null};this.save();return this.mission;}
  save(){try{this.storage?.setItem(KEY,JSON.stringify(this.progress));return true;}catch{return false;}}
  setCheckpoint(f){this.checkpoint={x:f.x,y:f.y,z:f.z,vx:f.vx,vy:f.vy,vz:f.vz,heading:f.heading,pitch:f.pitch,bank:f.bank,throttle:f.throttle,trim:f.trim||0,flaps:f.flaps,gearExtension:f.gearExtension,gearTarget:f.gearTarget,ground:f.ground,airborne:f.airborne,engineHealth:[...f.engineHealth],isolated:f.isolated,gearFault:f.gearFault,hookTarget:f.hookTarget,hookExtension:f.hookExtension,time:f.time};}
- persistCheckpoint(special){if(this.sideTrip||!this.checkpoint)return;this.progress.resume={id:this.mission.id,checkpoint:{...this.checkpoint,special: special?{time:special.time,phase:special.phase,done:special.done,triggered:special.triggered,hold:special.hold}:null}};this.save();}
+ persistCheckpoint(special){if(!this.checkpoint)return;this.checkpoint.special=special?{time:special.time,phase:special.phase,done:special.done,triggered:special.triggered,hold:special.hold,freeUntil:special.freeUntil??null}:null;if(this.sideTrip)return;this.progress.resume={id:this.mission.id,checkpoint:{...this.checkpoint}};this.save();}
  update(dt,f,specialDone){if(!this.active||this.state==='complete')return false;this.time+=dt;this.specialDone=specialDone??this.specialDone;const a=airportById(this.mission.to),d=Math.hypot(f.x-a.x,f.z-a.z);this.state=!f.airborne?'takeoff':!this.specialDone?'special':d<1500?'approach':'enroute';
- const condition=this.mission.completion;const valid=f.airborne&&f.ground&&!f.crashed&&f.touch?.airport===a.id&&airportAt(f.x,f.z)?.id===a.id&&Math.hypot(f.vx,f.vz)<condition.maxGroundSpeed&&(!condition.requiresSpecial||this.specialDone)&&(!condition.requiresCable||f.arrest?.stopped);
+ const condition=this.mission.completion,p=runwayLocal(a,f.x,f.z);const atDestination=airportAt(f.x,f.z)?.id===a.id||(this.mission.id==='birds'&&f.touch?.airport===a.id&&p.across>=-a.width/2-20&&p.across<=270&&Math.abs(p.along)<=850);const valid=f.airborne&&f.ground&&!f.crashed&&f.touch?.airport===a.id&&atDestination&&Math.hypot(f.vx,f.vz)<condition.maxGroundSpeed&&(!condition.requiresSpecial||this.specialDone)&&(!condition.requiresCable||f.arrest?.stopped);
  this.hold=valid?this.hold+dt:0;if(this.hold<condition.holdSeconds)return false;this.state='complete';
  const rating={mission:this.mission.id,sink:f.touch.sink,alignment:f.touch.align,grade:f.touch.sink<1.5&&f.touch.align<.15?'OURO':f.touch.sink<3?'BOM POUSO':'CONCLUÍDA'},old=this.progress.ratings[this.index],rank=r=>r.grade==='OURO'?3:r.grade==='BOM POUSO'?2:1;
  if(!old||rank(rating)>rank(old)||(rank(rating)===rank(old)&&rating.sink<old.sink))this.progress.ratings[this.index]=rating;

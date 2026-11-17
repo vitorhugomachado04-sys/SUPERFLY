@@ -1,4 +1,4 @@
-import {AIRPORTS,REGIONS} from './airports.js?v=04.27';
+import {AIRPORTS,REGIONS} from './airports.js?v=04.43';
 export const GPS_COLORS={target:'#b6a4eb',focus:'#75d6ac',airport:'#b9d2cc',text:'#ecf4f2'};
 export function mapPoint(f,target,scale,limit=76){const x=(target.x-f.x)/scale,z=(target.z-f.z)/scale,d=Math.hypot(x,z),k=d>limit?limit/d:1;return{x:x*k,z:z*k,outside:d>limit,distance:d*scale};}
 export class NavigationMap{

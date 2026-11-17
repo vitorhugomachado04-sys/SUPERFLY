@@ -10,9 +10,9 @@ const main=[
 ];
 const extras=[
  ['turbines','Inspeção das turbinas','wind','wind','cessna','partial',12,'inspection','Passe pelos três pontos de inspeção e retorne à pista costeira.','winds'],
- ['heli','Entre prédios','city','city','r22','partial',9,'heli','Recolha a encomenda na Torre Porto, entregue no Hospital e retorne.','fog'],
- ['gear','Trem e picape','city','city','executive','clear',14,'gear','Encontre a picape, destrave o trem e faça outra aproximação.','fog'],
- ['lito','Homenagem ao Lito · Carga vital','city','city','executive','storm',23,'urgent','Voe até o ponto de transferência do órgão e retorne em até 12 minutos. Homenagem fictícia à aviação.','fog'],
+ ['heli','Entre prédios','city','city-heli','r22','partial',9,'heli','Recolha a encomenda na Torre Porto, entregue no Hospital e pouse no heliponto do Aeroporto Metrópole.','fog'],
+ ['gear','Trem e picape','city','city','executive','clear',14,'gear','Um trem de pouso travou. Acompanhe a picape em movimento para o mecânico destravar; depois siga os arcos, dê a volta e pouse.','fog'],
+ ['lito','Homenagem ao Lito · Carga vital','city','city','executive','storm',23,'urgent','Decole da Metrópole, pouse e pare na Ilha dos Ventos para recolher a carga vital e volte à Metrópole em 12 minutos. Homenagem fictícia à aviação.','fog'],
  ['birds','Bird strike · Retorno do Superfly Atlas','city','city','skycourier','partial',10,'birds','Enfrente a perda de um motor, isole a pane e retorne à metrópole.','fog'],
  ['supplies','Suprimentos nas montanhas','alpine','alpine','cessna','partial',14,'supply','Sobrevoe a zona, lance os suprimentos com X e retorne à base alpina.','storm'],
  ['cable-rescue','Busca no teleférico','peak','resort','h145','snow',15,'rescue','Localize o posto do teleférico, mantenha o pairado e leve a equipe ao resort.','peaks'],

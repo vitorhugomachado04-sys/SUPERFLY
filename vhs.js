@@ -12,10 +12,10 @@ export class VHSFilter {
    void main(){
     vec2 uv=uvFilm;float tick=floor(time*24.);float line=floor(uv.y*480.);
     float tracking=exp(-pow((uv.y-fract(time*.035))/.018,2.));
-    float wobble=sin(uv.y*37.+time*1.7)*.00065+(noise(vec2(line,tick))-.5)*.0007;
-    uv.x+=wobble+tracking*sin(time*8.+uv.y*200.)*.002;
+    float wobble=sin(uv.y*37.+time*1.7)*.00085+(noise(vec2(line,tick))-.5)*.001;
+    uv.x+=wobble+tracking*sin(time*8.+uv.y*200.)*.0026;
     uv=clamp(uv,vec2(.002),vec2(.998));
-    vec2 bleed=vec2(1.8/resolution.x,0.);
+    vec2 bleed=vec2(2.2/resolution.x,0.);
     vec3 col=vec3(texture2D(film,clamp(uv+bleed,0.,1.)).r,texture2D(film,uv).g,texture2D(film,clamp(uv-bleed,0.,1.)).b);
     gl_FragColor=vec4(col,1.);
     #include <tonemapping_fragment>
@@ -23,10 +23,22 @@ export class VHSFilter {
     col=gl_FragColor.rgb;
     float luma=dot(col,vec3(.299,.587,.114));col=mix(vec3(luma),col,.78);
     col=col*.91+vec3(.038,.029,.043);
-    float grain=(noise(floor(uvFilm*resolution)+vec2(tick,tick*.71))-.5)*.055;
-    col+=grain;col*=1.-.035*(.5+.5*sin(uvFilm.y*480.*6.28318));
-    col+=tracking*.012;
-    vec2 edge=uvFilm*(1.-uvFilm);col*=.86+.14*pow(clamp(edge.x*edge.y*16.,0.,1.),.22);
+    // Tape grain and occasional short dropouts, without full-screen flashes.
+    vec2 tapePixel=floor(uvFilm*vec2(min(resolution.x,960.),min(resolution.y,540.)));
+    float grain=(noise(tapePixel+vec2(tick,tick*.71))-.5)*.085;
+    float dropout=step(.994,noise(vec2(line,tick*.37)))*step(.78,noise(vec2(floor(uvFilm.x*32.),line+tick)));
+    col+=grain+dropout*.09;
+    col+=tracking*(.018+(noise(vec2(line,tick))-.5)*.045);
+    // Resolve at least three physical pixels per scanline to avoid moire on small screens.
+    float scanCount=min(360.,resolution.y/3.);
+    float scan=.5+.5*cos(uvFilm.y*scanCount*6.28318);
+    col*=1.-.075*scan;
+    // Very light RGB phosphor grille, locked to physical output pixels.
+    float phosphor=mod(floor(gl_FragCoord.x),3.);
+    vec3 mask=vec3(.978);
+    if(phosphor<1.)mask.r=1.;else if(phosphor<2.)mask.g=1.;else mask.b=1.;
+    col*=mask;
+    vec2 edge=uvFilm*(1.-uvFilm);col*=.82+.18*pow(clamp(edge.x*edge.y*16.,0.,1.),.22);
     gl_FragColor=vec4(col,1.);
    }`});
   this.scene=new T.Scene();this.camera=new T.Camera();

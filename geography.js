@@ -1,8 +1,8 @@
-import {WIND_PLACES} from './winds-layout.js?v=04.27';
-import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.27';
+import {WIND_PLACES} from './winds-layout.js?v=04.43';
+import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.43';
 // Shared coastline and relief: rendering and ground contact use the same shape.
 export function coastRadius(x,z){const a=Math.atan2(z/2275,x/1820);return Math.hypot(x/1820,z/2275)/(1+.055*Math.sin(a*3+.4)+.025*Math.cos(a*5));}
-function schoolTerrain(x,z){if(coastRadius(x,z)>1)return -3;let h=3;for(const [cx,cz,a,w]of[[-950,-800,150,400],[1050,-1300,200,460],[-1200,1000,110,380]])h+=a*Math.exp(-((x-cx)**2+(z-cz)**2)/(w*w));const t=Math.max(0,Math.min(1,Math.max((Math.abs(x)-230)/250,(Math.abs(z)-1200)/400)));return 3+(h-3)*t*t*(3-2*t);}
+function schoolTerrain(x,z){const radius=coastRadius(x,z);if(radius>=1)return -5;let h=3;for(const [cx,cz,a,w]of[[-950,-800,150,400],[1050,-1300,200,460],[-1200,1000,110,380]])h+=a*Math.exp(-((x-cx)**2+(z-cz)**2)/(w*w));const t=Math.max(0,Math.min(1,Math.max((Math.abs(x)-230)/250,(Math.abs(z)-1200)/400)));const inland=3+(h-3)*t*t*(3-2*t),shore=Math.max(0,Math.min(1,(1-radius)/.1));return -5+(inland+5)*shore*shore*(3-2*shore);}
 export function eastCoast(z){let lo=0,hi=2100;for(let i=0;i<24;i++){let mid=(lo+hi)/2;if(coastRadius(mid,z)<1)lo=mid;else hi=mid;}return lo;}
 export const groves=[[-1000,-800,240],[1050,-1200,280],[-1150,1000,220],[1300,100,200],[800,1200,200],[-550,-1500,220]];
 export const landmarks=[{x:820,z:650,label:'VILA',color:'#e4bb8e'},{x:eastCoast(1000),z:1000,label:'PORTO',color:'#c7e5de'},{x:eastCoast(1600)-45,z:1600,label:'FAROL',color:'#fff2c2'},{x:-800,z:700,label:'CAMPOS',color:'#b7c97c'}];
@@ -21,7 +21,7 @@ export function terrain(x,z,includePads=true){
   if(r.id==='winds')relief=110*Math.exp(-((dx-650)**2+(dz+500)**2)/280000)+25*Math.sin(dx*.004+dz*.002)**2;
   if(r.id==='aurora-snow')relief=260*Math.exp(-((dx-1000)**2+(dz+750)**2)/260000)+130*Math.exp(-((dx+1050)**2+(dz-700)**2)/160000);
   if(r.id==='desert')relief=45*Math.sin(dx*.003+dz*.006)**2+200*Math.exp(-(((dx+1300)/290)**4+((dz-1100)/340)**4))+150*Math.exp(-(((dx-1250)/320)**4+((dz-1000)/400)**4));
-  const coast=smooth((1.04-rad)/.16);h=Math.max(h,-3+(r.height+3+relief)*coast);
+  const coast=smooth((1.04-rad)/.16);h=Math.max(h,-5+(r.height+5+relief)*coast);
  }
  // Engineered summit terrace with a gradual transition back to the natural ridge.
  const summitD=Math.hypot(Math.max(0,Math.abs(x+11000-960)-205),Math.max(0,Math.abs(z+1000+580)-110));if(summitD<240)h=h*smooth(summitD/240)+1118*(1-smooth(summitD/240));

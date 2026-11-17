@@ -156,5 +156,15 @@ body.glider-flight .instruments .power,body.glider-flight #touch .throttle{displ
 .challenge-card:hover,.challenge-card:focus-visible,.career-card:hover,.career-card:focus-visible{color:#fff!important;background:#314c59!important}
 .challenge-card:hover *,.challenge-card:focus-visible *,.career-card:hover *,.career-card:focus-visible *{color:inherit!important}
 .menu-actions button:hover *,.menu-actions button:focus-visible *{color:#263c44!important}
-#cheats-area{border-top:1px solid #ffffff40;margin-top:18px;padding-top:12px}#cheats-area h3{color:#e9f296;letter-spacing:3px;margin:0}#cheats-area p{font-size:11px}#cheats-area button{padding:12px;font-size:10px}
+#modal>div{width:min(620px,100%)}
+.cheats-eyebrow{font-size:10px;letter-spacing:3px;color:var(--lime)}#cheats-title{margin:12px 0}#cheats-menu>p{margin:12px 0 20px}
+.cheat-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left}
+#modal .cheat-option{margin:0;width:100%;padding:17px;text-align:left;background:#263c44;border:1px solid #f6f3df50}
+.cheat-option>span{display:flex;align-items:center;justify-content:space-between;gap:12px}.cheat-option strong{font-size:12px}.cheat-option b{font-size:10px;letter-spacing:1px}.cheat-option small{display:block;line-height:1.6;font-size:11px;font-weight:400;letter-spacing:0;margin-top:10px}
+#modal .cheat-option[aria-pressed="true"]{background:#454064;border-color:#c2b4f1}.cheat-option[aria-pressed="true"] b{color:var(--lime)}
+#modal .cheat-option:enabled:hover,#modal .cheat-option:enabled:focus-visible{background:var(--paper);color:var(--ink)}#modal .cheat-option:enabled:hover b,#modal .cheat-option:enabled:focus-visible b{color:inherit}
+#modal .cheat-option:disabled{opacity:.5;cursor:default}.dmg-palette{display:flex;gap:3px;margin-top:12px}.dmg-palette i{display:block;width:20px;height:9px;background:#0f380f}.dmg-palette i:nth-child(2){background:#306230}.dmg-palette i:nth-child(3){background:#8bac0f}.dmg-palette i:nth-child(4){background:#9bbc0f}
+#cheats-menu .cheats-hint{font-size:11px;opacity:.8;margin:16px 0 8px}body[data-filter="dmg"]>.grain{display:none}
+@media(max-width:480px){.cheat-list{grid-template-columns:1fr}#modal>div{padding:20px}#modal .cheat-option{padding:12px}}
+
 #modal>div{max-height:95vh;overflow:auto}
