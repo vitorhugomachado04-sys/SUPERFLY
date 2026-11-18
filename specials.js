@@ -1,33 +1,56 @@
-import {CIRCUIT_POINTS,flightGate,orientGate,GATE_RADIUS} from './flight-plan.js?v=04.45';
-import {terrain} from './geography.js?v=04.45';
+import {LegendMission,LEGEND_MISSIONS} from './legend-missions.js?v=04.53';
+import {CIRCUIT_POINTS,flightGate,orientGate,GATE_RADIUS} from './flight-plan.js?v=04.53';
+import {terrain} from './geography.js?v=04.53';
 import * as T from './three.js';
-import {airportById} from './airports.js?v=04.45';
-import {getAircraft} from './fleet.js?v=04.45';
-import {jetAircraft} from './jets.js?v=04.45';
-import {CrashEffect} from './crash.js?v=04.45';
+import {airportById} from './airports.js?v=04.53';
+import {getAircraft} from './fleet.js?v=04.53';
+import {jetAircraft} from './jets.js?v=04.53';
+import {CrashEffect} from './crash.js?v=04.53';
 export class SpecialMission{
  constructor(scene){this.scene=scene;this.group=new T.Group();scene.add(this.group);this.explosion=new CrashEffect(scene);this.reset();}
- reset(){for(const p of this.damageParts||[])this.scene.remove(p.m);for(const m of [...this.group.children]){this.group.remove(m);m.traverse(o=>{if(o.isSprite)o.material.dispose();if(o.isMesh){o.geometry.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});}this.explosion.reset();this.time=0;this.freeUntil=null;this.phase=0;this.done=false;this.triggered=false;this.hold=0;this.cooldown=0;this.drops=[];this.bullets=[];this.hits=0;this.message='';this.actionLabel='';this.target=null;this.points=null;this.truck=null;this.marker=null;this.enemy=null;this.enemies=[];this.checkpointMade=false;this.damageParts=[];this.engineSmoke=[];}
- start(m){this.reset();this.kind=m.special;this.airport=airportById(m.to);this.done=!this.kind;for(let i=0;i<14;i++){const m=new T.Sprite(new T.SpriteMaterial({map:this.explosion.texture,color:i<10?'#4d5150':'#ee8b35',transparent:true,opacity:0,depthWrite:false}));this.group.add(m);this.engineSmoke.push(m);}this.origin=airportById(m.from);this.target={x:this.origin.x+700,z:this.origin.z,y:this.origin.elevation+280};if(this.kind==='circuit')this.target={x:0,y:160,z:-1500};
+ reset(){this.legend?.dispose();this.legend=null;for(const p of this.damageParts||[])this.scene.remove(p.m);for(const m of [...this.group.children]){this.group.remove(m);m.traverse(o=>{if(o.isSprite)o.material.dispose();if(o.isMesh){o.geometry.dispose();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}});}this.explosion.reset();this.time=0;this.freeUntil=null;this.phase=0;this.done=false;this.triggered=false;this.hold=0;this.cooldown=0;this.drops=[];this.bullets=[];this.hits=0;this.message='';this.actionLabel='';this.target=null;this.points=null;this.truck=null;this.marker=null;this.enemy=null;this.enemies=[];this.checkpointMade=false;this.damageParts=[];this.engineSmoke=[];}
+ start(m){this.reset();this.kind=m.special;this.airport=airportById(m.to);this.done=!this.kind;for(let i=0;i<14;i++){const m=new T.Sprite(new T.SpriteMaterial({map:this.explosion.texture,color:i<10?'#4d5150':'#ee8b35',transparent:true,opacity:0,depthWrite:false}));this.group.add(m);this.engineSmoke.push(m);}this.origin=airportById(m.from);if(LEGEND_MISSIONS.includes(this.kind)){this.legend=new LegendMission(m,this.group);this.target=this.legend.target;return;}this.target={x:this.origin.x+700,z:this.origin.z,y:this.origin.elevation+280};if(this.kind==='circuit')this.target={x:0,y:160,z:-1500};
  if(['inspection','supply','rescue','escort'].includes(this.kind)){
   const o=this.origin;this.points=this.kind==='inspection'?[[o.x+580,o.z-1050],[o.x+765,o.z-670],[o.x+950,o.z-290]]:this.kind==='rescue'?[[-9870,-1100]]:[[o.x+1100,o.z-900]];
   if(this.kind==='urgent')this.points=[[o.x+2100,o.z+200]];
   this.points=this.points.map(([x,z])=>({x,z,y:terrain(x,z)+(this.kind==='rescue'?28:170)}));this.target={...this.points[0]};
   this.marker=flightGate();orientGate(this.marker,this.origin,this.target);this.group.add(this.marker);
+  if(this.kind==='supply'){
+   // Hikers wait beside the drop point, with each pair of boots on the local slope.
+   const colors=['#e58549','#547fa6','#c4a347'];
+   for(let i=0;i<3;i++){
+    const person=new T.Group();person.name='supply-recipient-'+(i+1);
+    const x=this.target.x+(i-1)*5,z=this.target.z+9+Math.abs(i-1)*2;
+    person.position.set(x,terrain(x,z),z);person.rotation.y=(i-1)*.35;
+    this.group.add(person);
+    for(const side of [-1,1]){
+     this.box(side*.2,.12,-.08,.3,.24,.5,'#303c41',person);
+     this.box(side*.2,.62,0,.27,.8,.3,'#405366',person);
+     const arm=this.box(side*.57,1.65,0,.23,.85,.25,colors[i],person);
+     arm.rotation.z=side*.65;
+     this.box(side*.82,1.98,0,.24,.25,.24,'#d9ae87',person);
+    }
+    this.box(0,1.25,0,.78,.8,.46,colors[i],person);
+    this.box(0,1.94,0,.43,.48,.43,'#d9ae87',person);
+    this.box(0,2.2,0,.49,.16,.49,colors[i],person);
+    this.box(0,1.3,.36,.62,.72,.32,'#58634b',person);
+   }
+  }
   if(this.kind==='escort'){this.escort=new T.Group();this.box(0,0,0,1,1,6,'#e9e1c6',this.escort);this.box(0,.3,0,9,.15,1.4,'#9483bf',this.escort);this.group.add(this.escort);}
  }
  if(this.kind==='urgent'){this.pickup=airportById('wind');this.target={...this.pickup,y:this.pickup.elevation};}
 
 }
  box(x,y,z,w,h,d,color,parent=this.group){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color,roughness:.7}));m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;}
- action(f){
+ action(f){if(this.legend){this.legend.action(f);this.syncLegend();return;}
  if(this.kind==='supply'&&!this.done&&this.target&&Math.hypot(f.x-this.target.x,f.y-this.target.y,f.z-this.target.z)<150){const g=new T.Group();g.position.set(f.x,f.y,f.z);this.box(0,0,0,2,2,2,'#d6b285',g);const canopy=new T.Mesh(new T.SphereGeometry(3,12,8,0,Math.PI*2,0,Math.PI/2),new T.MeshStandardMaterial({color:'#ab94d9',side:T.DoubleSide}));canopy.position.y=4;g.add(canopy);this.group.add(g);this.drops.push({g,canopy,age:2});this.done=true;this.target=null;this.message='Suprimentos entregues. Retorne à base alpina.';}
 
  if(this.kind==='birds'&&this.triggered&&!f.isolated){f.isolated=true;this.message='Motor isolado · hélice embandeirada. Compense com Q/E e retorne.';this.actionLabel='';}
  if(this.kind==='jump'&&!this.done){if(this.jumpReady){for(let i=0;i<6;i++){const g=new T.Group();g.position.set(f.x,f.y,f.z+i*2);this.box(0,0,0,.7,1.5,.5,'#6a659e',g);const canopy=new T.Mesh(new T.SphereGeometry(4,12,8,0,Math.PI*2,0,Math.PI/2),new T.MeshStandardMaterial({color:i%2?'#ede6b9':'#a39bcb',side:T.DoubleSide}));canopy.position.y=5;canopy.visible=false;g.add(canopy);this.group.add(g);this.drops.push({g,canopy,age:0});}this.done=true;this.target=null;this.message='Saltos realizados. Retorne e pouse no campo das dunas.';} }
  if(this.kind==='intercept'&&this.phase===2&&this.cooldown<=0){this.cooldown=.13;const b=this.box(f.x,f.y,f.z,.2,.2,2,'#fff4a2');this.bullets.push({m:b,age:0,v:new T.Vector3(Math.sin(f.heading)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.heading)*Math.cos(f.pitch)).multiplyScalar(420)});}
  }
- update(dt,f,camera){this.time+=dt;this.cooldown-=dt;const a=this.airport;this.actionLabel='';
+ syncLegend(){for(const k of ['phase','done','message','actionLabel','target','points'])this[k]=this.legend[k];}
+ update(dt,f,camera){if(this.legend){this.legend.update(dt,f);this.syncLegend();return;}this.time+=dt;this.cooldown-=dt;const a=this.airport;this.actionLabel='';
  if(['inspection','supply','rescue','escort'].includes(this.kind)){
  if(this.kind==='urgent'&&this.time>720){f.crashed=true;f.reason='Tempo de transferência excedido. Repita o transporte urgente.';}
  if(!this.done){

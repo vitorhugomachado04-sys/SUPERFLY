@@ -22,7 +22,7 @@ export const AIRPORTS=[
  {...localRunway('yacht','Panorama Yacht · Convés','metro',-2900,-1500,32,32,10),type:'helipad',customGeometry:true,menuRegion:'ocean'},
  {...localRunway('roof-a','Torre Porto · H1','metro',550,350,36,36,240),type:'helipad'},
  {...localRunway('roof-b','Hospital · H2','metro',850,-350,36,36,155),type:'helipad'},
- {...localRunway('alpine-heli','Alpina · Heliponto','alpine',-300,450,40,40,220),type:'helipad'},
+ {...localRunway('alpine-heli','Alpina · Heliponto','alpine',-300,450,40,40,177),type:'helipad',groundLevel:true},
  localRunway('alpine','Alpina · Pista inclinada','alpine',-200,0,760,44,190,.035),
  localRunway('peak','Posto dos Picos','peaks',150,0,690,42,310,.025),
  {...localRunway('resort','Resort dos Picos · Heliponto','peaks',1005,-658,34,34,1118.65),type:'helipad',customGeometry:true},

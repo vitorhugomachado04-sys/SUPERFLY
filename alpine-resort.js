@@ -1,5 +1,5 @@
-import {helicopter} from './helicopters.js?v=04.45';
-import {getAircraft} from './fleet.js?v=04.45';
+import {helicopter} from './helicopters.js?v=04.53';
+import {getAircraft} from './fleet.js?v=04.53';
 export const resortReserved=(x,z)=>x>780&&x<1190&&z>-720&&z<250;
 export function addAlpineResort({scene,world,r,item,ground,obstacle}){
  const y=1118,hx=895,hz=-600;

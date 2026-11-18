@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {REGIONS} from './airports.js?v=04.45';
+import {REGIONS} from './airports.js?v=04.53';
 // Retain a bounded CPU cache; detach far details and free unreferenced GPU buffers.
 // Geometry shared by a resident object is never disposed. Coarse terrain stays resident.
 export class WorldStreaming{

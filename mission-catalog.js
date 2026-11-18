@@ -20,9 +20,17 @@ const extras=[
  ['jump','Paraquedistas nas dunas','base','base','skycourier','clear',16,'jump','Leve o grupo à zona, estabilize, libere com X e retorne à Base Horizonte.','desert'],
  ['canyons','Correio dos cânions','base','dunes','cessna','clear',15,null,'Leve o correio ao pequeno campo de terra. A viagem principal continua na Base Horizonte.','desert']
 ];
+extras.push(
+ ['14bis','14-Bis: O Primeiro Grande Voo','wind','wind','14bis','clear',10,'historic','PARIS, 1906 · Assuma os controles de Santos-Dumont. Decole, percorra 220 metros no ar e pouse suavemente no campo da Ilha dos Ventos.','winds'],
+ ['beluga-delivery','Special Delivery · BelugaXL','city','base','belugaxl','coastal',12,'delivery','Transporte uma seção de fuselagem de 18 toneladas à fábrica da Base Horizonte. Pouse, pare e entregue a carga com X.','fog'],
+ ['supersonic-run','Supersonic Run · Concorde','city','city','concorde','clear',16,'supersonic','Decole e alcance Mach 2 no corredor oceânico. Complete 8 km supersônicos, reduza e retorne à Metrópole.','fog'],
+ ['blackbird-recon','Blackbird Recon · SR-71','base','base','sr71','clear',9,'recon','Fotografe a instalação fictícia: altitude 10–16 km, Mach 2.5–3.3. Ative RECON CAMERA e retorne à base.','desert']
+);
 export const MAIN_IDS=main.map(m=>m[0]);
 const make=(row,extra=false,index=0)=>{const [id,name,from,to,aircraft,weather,hour,special,objective,dep]=row;return{id,name,from,to,aircraft,weather,hour,special,kind:extra?'extra':'main',dependencies:extra?[dep]:index?[main[index-1][0]]:[],objectives:[objective],completion:{type:'landing',airport:to,maxGroundSpeed:2,holdSeconds:2,requiresSpecial:!!special,requiresCable:to==='carrier'},cover:`./${id}.jpg`,status:'playable',radio:`Lia · Operações Panorama: ${objective}`};};
 export const MISSIONS=[...main.map((r,i)=>make(r,false,i)),...extras.map(r=>make(r,true))];
+const pioneer=MISSIONS.find(m=>m.id==='14bis');pioneer.completion.maxGroundSpeed=18;pioneer.completion.holdSeconds=.12;
+for(const m of MISSIONS.filter(m=>['14bis','beluga-delivery','supersonic-run','blackbird-recon'].includes(m.id)))m.cover=`./${m.id}.svg`;
 const pending=[
  ['levee','Pouso no dique','fog','boeing','city','city','Dique com superfície de pouso e cenário próprio.'],
  ['raceway','A antiga pista de corrida','desert','boeing','base','base','Autódromo convertido em pista, com aproximação e obstáculos.'],
@@ -32,5 +40,5 @@ const pending=[
  ['windscreen','Perda do para-brisa','fog','executive','city','city','Dano de cabine, despressurização e objetivo de descida de emergência.'],
  ['fuselage','Dano na fuselagem','desert','boeing','base','base','Dano estrutural visual e efeitos aerodinâmicos próprios.']
 ];
-export const PENDING_MISSIONS=pending.map(([id,name,dep,aircraft,from,to,reason])=>({id,name,kind:'extra',dependencies:[dep],aircraft,from,to,objectives:[reason],completion:{type:'custom',implemented:false},cover:`./${id}.svg`,status:'planned',reason}));
-export const CATALOG=[...MISSIONS,...PENDING_MISSIONS];
+export const PENDING_MISSIONS=pending.map(([id,name,dep,aircraft,from,to,reason])=>({id,name,kind:'extra',dependencies:[dep],aircraft,from,to,objectives:[reason],completion:{type:'custom',implemented:false},cover:`./${id}.png`,status:'planned',reason}));
+export const CATALOG=MAIN_IDS.flatMap(id=>[MISSIONS.find(m=>m.id===id),...MISSIONS.filter(m=>m.kind==='extra'&&m.dependencies.includes(id)).sort((a,b)=>a.id==='14bis'?-1:b.id==='14bis'?1:0),...PENDING_MISSIONS.filter(m=>m.dependencies.includes(id))]);

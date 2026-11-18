@@ -1,5 +1,5 @@
-import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.45';
-import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.45';
+import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.53';
+import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.53';
 export {MISSIONS,MAIN_IDS,CATALOG};
 const KEY='superfly-career-v3',LEGACY='superfly-career-v2';
 const oldIds=['school','winds','fog','heli','birds','gear','storm','peaks','aurora','desert','jump','base','intercept','carrier'];
@@ -10,7 +10,7 @@ export class Career{
  get hasStarted(){return this.progress.started||this.progress.completed.length>0;}
  get nextMission(){return MISSIONS[this.progress.next]&&this.progress.next<MAIN_IDS.length?MISSIONS[this.progress.next]:null;}
  available(m){return m.dependencies.every(id=>this.progress.completed.includes(id));}
- extrasAt(airport){return MISSIONS.filter(m=>m.kind==='extra'&&m.from===airport&&this.available(m));}
+ extrasAt(airport){return MISSIONS.filter(m=>m.kind==='extra'&&m.from===airport&&this.available(m)).sort((a,b)=>a.id==='14bis'?-1:b.id==='14bis'?1:0);}
  newCareer(){if(this.hasStarted)try{this.storage?.setItem(KEY+'-backup',JSON.stringify(this.progress));}catch{}this.progress=fresh();this.checkpoint=null;this.save();}
  begin(index=this.progress.next){this.index=Math.min(index,MISSIONS.length-1);this.mission=MISSIONS[this.index];if(!this.mission||!this.available(this.mission))throw Error('Missão bloqueada');this.progress.started=true;this.replay=this.progress.completed.includes(this.mission.id);this.sideTrip=this.mission.kind==='extra'||this.replay;this.active=true;this.state='preparation';this.time=0;this.hold=0;this.specialDone=!this.mission.special;this.gate=0;this.events=new Set();this.checkpoint=null;
  if(!this.sideTrip)this.progress.resume={id:this.mission.id,checkpoint:null};this.save();return this.mission;}
@@ -24,6 +24,6 @@ export class Career{
  if(!old||rank(rating)>rank(old)||(rank(rating)===rank(old)&&rating.sink<old.sink))this.progress.ratings[this.index]=rating;
  if(!this.progress.completed.includes(this.mission.id))this.progress.completed.push(this.mission.id);
  if(!this.sideTrip){this.progress.last=arrivalSpawn(a,f.config,f.touch.heading??f.heading);this.progress.resume=null;}this.sync();
- for(const m of MISSIONS.filter(m=>this.available(m)))if(!this.progress.unlocked.includes(m.aircraft))this.progress.unlocked.push(m.aircraft);this.saved=this.save();return true;
+ for(const m of MISSIONS.filter(m=>this.available(m)))if((m.id!=='14bis'||this.progress.completed.includes('14bis'))&&!this.progress.unlocked.includes(m.aircraft))this.progress.unlocked.push(m.aircraft);this.saved=this.save();return true;
  }
 }

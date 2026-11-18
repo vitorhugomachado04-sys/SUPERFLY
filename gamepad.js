@@ -32,7 +32,7 @@ export class GamepadInput{
 }
 const menuFocus=new WeakMap();let lastMenu=null;
 export function syncPadMenu(){
- const root=['save-menu','options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
+ const root=['filter-menu','save-menu','options-settings','letterman-editor','modal','space-end','challenge-settings','flight-settings','career-board','menu'].map(id=>document.getElementById(id)).find(e=>e&&!e.hidden&&e.getClientRects().length)||document.querySelector('#space-mission');
  if(!root)return null;
  if(root!==lastMenu){if(lastMenu?.contains(document.activeElement))menuFocus.set(lastMenu,document.activeElement);const saved=menuFocus.get(root);if(saved?.isConnected&&saved.getClientRects().length)saved.focus({preventScroll:true});else [...root.querySelectorAll('button:not([disabled]),select:not([disabled]),input:not([disabled])')].find(e=>e.getClientRects().length)?.focus({preventScroll:true});lastMenu=root;}return root;
 }
@@ -41,6 +41,6 @@ export function navigatePadMenu(direction){
  const items=[...root.querySelectorAll('button,select,input')].filter(e=>!e.disabled&&e.getClientRects().length);if(!items.length)return;
  let index=items.indexOf(document.activeElement),current=items[index];
  if((direction==='left'||direction==='right')&&current?.matches('select,input[type=range],input[type=number]')){const step=direction==='left'?-1:1;if(current.tagName==='SELECT')current.selectedIndex=Math.max(0,Math.min(current.options.length-1,current.selectedIndex+step));else current.value=Math.max(+current.min||0,Math.min(+current.max||100,+current.value+step*(+current.step||1)));current.dispatchEvent(new Event('input',{bubbles:true}));current.dispatchEvent(new Event('change',{bubbles:true}));return;}
- if(direction==='confirm'){if(!current){items[0].focus();return;}if(current.tagName==='BUTTON')current.click();return;}
+ if(direction==='confirm'){if(!current){items[0].focus();return;}if(current.tagName==='BUTTON'||current.matches('input[type=checkbox]'))current.click();return;}
  index=index<0?0:(index+(direction==='up'||direction==='left'?-1:1)+items.length)%items.length;items[index].focus({preventScroll:true});items[index].scrollIntoView({block:'nearest'});
 }

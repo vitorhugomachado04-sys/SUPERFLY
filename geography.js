@@ -1,5 +1,5 @@
-import {WIND_PLACES} from './winds-layout.js?v=04.45';
-import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.45';
+import {WIND_PLACES} from './winds-layout.js?v=04.53';
+import {REGIONS,AIRPORTS,runwayLocal,surfaceHeight} from './airports.js?v=04.53';
 // Shared coastline and relief: rendering and ground contact use the same shape.
 export function coastRadius(x,z){const a=Math.atan2(z/2275,x/1820);return Math.hypot(x/1820,z/2275)/(1+.055*Math.sin(a*3+.4)+.025*Math.cos(a*5));}
 function schoolTerrain(x,z){const radius=coastRadius(x,z);if(radius>=1)return -5;let h=3;for(const [cx,cz,a,w]of[[-950,-800,150,400],[1050,-1300,200,460],[-1200,1000,110,380]])h+=a*Math.exp(-((x-cx)**2+(z-cz)**2)/(w*w));const t=Math.max(0,Math.min(1,Math.max((Math.abs(x)-230)/250,(Math.abs(z)-1200)/400)));const inland=3+(h-3)*t*t*(3-2*t),shore=Math.max(0,Math.min(1,(1-radius)/.1));return -5+(inland+5)*shore*shore*(3-2*shore);}
@@ -36,6 +36,11 @@ export function terrain(x,z,includePads=true){
   const near=a.id==='city'?-850:-230,far=a.id==='city'?850:175,right=a.id==='city'?270:174;
   const apronWeight=smooth((p.across-50)/22)*(1-smooth((p.across-right)/35))*smooth((p.along-near+30)/30)*(1-smooth((p.along-far)/30));
   h=h*(1-apronWeight)+a.elevation*apronWeight;
+ }
+ // Ground-level pads have a gently blended clearing shared by rendering and contact.
+ for(const a of AIRPORTS.filter(a=>a.groundLevel)){
+  const d=Math.hypot(Math.max(0,Math.abs(x-a.x)-34),Math.max(0,Math.abs(z-a.z)-34));
+  const weight=1-smooth(d/45);h=h*(1-weight)+a.elevation*weight;
  }
  const pond=Math.hypot((x-950)/100,(z-40)/72);if(pond<1.2){const w=1-smooth((pond-.7)/.5);h=h*(1-w)+.8*w;}
  return h;

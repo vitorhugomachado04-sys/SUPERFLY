@@ -1,5 +1,5 @@
-import {cargoAircraft} from './cargo-aircraft.js?v=04.45';
-import {helicopter} from './helicopters.js?v=04.45';
+import {cargoAircraft} from './cargo-aircraft.js?v=04.53';
+import {helicopter} from './helicopters.js?v=04.53';
 import * as T from './three.js';
 export function extraAircraft(c){if(c.id==='skycourier')return cargoAircraft(c);if(c.helicopter)return helicopter(c);const g=new T.Group(),cache=new Map(),props=[],gears=[];let rotor,tailRotor;
  const mat=color=>{if(!cache.has(color))cache.set(color,new T.MeshStandardMaterial({color,roughness:.65,flatShading:true}));return cache.get(color);};

@@ -1,8 +1,8 @@
-import {addCoastalLife} from './coastal-life.js?v=04.45';
+import {addCoastalLife} from './coastal-life.js?v=04.53';
 import * as T from './three.js';
-import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.45';
-import {populateRegion} from './region-detail.js?v=04.45';
-import {terrain,regionRadius} from './geography.js?v=04.45';
+import {AIRPORTS,REGIONS,surfaceHeight,airportAt} from './airports.js?v=04.53';
+import {populateRegion} from './region-detail.js?v=04.53';
+import {terrain,regionRadius} from './geography.js?v=04.53';
 // The wide apron only surrounds the hangars; runway shoulders stay narrow.
 function apronRight(a,z){const dz=z-a.z;if(a.id==='city'&&dz>=-850&&dz<=850)return a.x+270;if(dz>=-230&&dz<=175)return a.x+174;if(dz>=215&&dz<=265)return a.x+195;return a.x+a.width/2+20;}
 export function addRegions(scene,world){
@@ -34,7 +34,8 @@ export function addRegions(scene,world){
  const cv=document.createElement('canvas');cv.width=256;cv.height=a.type==='helipad'?256:2048;const ctx=cv.getContext('2d');ctx.fillStyle=a.type==='helipad'?'#4e746c':a.surface==='terra'?'#a88b67':'#46555e';ctx.fillRect(0,0,cv.width,cv.height);ctx.strokeStyle='#ede8c8';ctx.fillStyle='#ede8c8';ctx.lineWidth=5;
  if(a.type==='helipad'){ctx.beginPath();ctx.arc(128,128,96,0,7);ctx.stroke();ctx.font='bold 145px sans-serif';ctx.textAlign='center';ctx.fillText('H',128,180);}else{ctx.setLineDash([45,50]);ctx.beginPath();ctx.moveTo(128,60);ctx.lineTo(128,1988);ctx.stroke();ctx.setLineDash([]);for(const y of [90,1910])for(let x=25;x<240;x+=30)ctx.fillRect(x,y,10,35);ctx.font='bold 58px sans-serif';ctx.fillText('36',93,1850);ctx.fillText('18',93,220);}
  const tex=new T.CanvasTexture(cv);tex.colorSpace=T.SRGBColorSpace;const verts=[];for(const [x,z]of [[a.x-a.width/2,a.z-a.length/2],[a.x+a.width/2,a.z-a.length/2],[a.x-a.width/2,a.z+a.length/2],[a.x+a.width/2,a.z+a.length/2]])verts.push(x,surfaceHeight(a,x,z)+(a.type==='helipad'?.12:.04),z);const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(verts,3));geo.setAttribute('uv',new T.Float32BufferAttribute([0,1,1,1,0,0,1,0],2));geo.setIndex([0,2,1,1,2,3]);geo.computeVertexNormals();const runway=new T.Mesh(geo,new T.MeshStandardMaterial({map:tex,roughness:1}));runway.name=`surface-${a.id}`;runway.receiveShadow=true;scene.add(runway);
- if(a.type==='helipad'){const base=terrain(a.x,a.z,false),supportTop=a.elevation-.4;if(supportTop>base){const support=block(a.x,(base+supportTop)/2,a.z,52,supportTop-base,52,'#788c96');support.name=`support-${a.id}`;}for(let y=base+8;y<a.elevation-5;y+=8){block(a.x,y,a.z+26.1,46,3,.2,'#afc5c5');block(a.x-26.1,y,a.z,.2,3,46,'#9ab9be');}const slab=block(a.x,a.elevation-.24,a.z,44,.32,44,'#526e75');slab.name=`slab-${a.id}`;world.obstacles.push({x:a.x,z:a.z,w:52,d:52,top:a.elevation-1});}
+ if(a.type==='helipad'&&a.groundLevel){const apron=block(a.x,a.elevation-.12,a.z,48,.3,48,'#a0a99b');apron.name=`apron-${a.id}`;}
+ if(a.type==='helipad'&&!a.groundLevel){const base=terrain(a.x,a.z,false),supportTop=a.elevation-.4;if(supportTop>base){const support=block(a.x,(base+supportTop)/2,a.z,52,supportTop-base,52,'#788c96');support.name=`support-${a.id}`;}for(let y=base+8;y<a.elevation-5;y+=8){block(a.x,y,a.z+26.1,46,3,.2,'#afc5c5');block(a.x-26.1,y,a.z,.2,3,46,'#9ab9be');}const slab=block(a.x,a.elevation-.24,a.z,44,.32,44,'#526e75');slab.name=`slab-${a.id}`;world.obstacles.push({x:a.x,z:a.z,w:52,d:52,top:a.elevation-1});}
  }
  const step=a.type==='helipad'?12:65;for(let z=a.z-a.length/2;z<=a.z+a.length/2;z+=step)for(const side of [-1,1]){let x=a.x+side*(a.width/2+1),y=surfaceHeight(a,x,z)+.6;const lamp=new T.Mesh(new T.SphereGeometry(a.type==='helipad'?.6:1.2,6,4),new T.MeshBasicMaterial({color:a.type==='helipad'?'#8bf7ba':'#ffedbd',transparent:true}));lamp.position.set(x,y,z);scene.add(lamp);world.nightLights.push(lamp);}
  if(a.type==='runway'){for(let k=1;k<=6;k++){const z=a.z+a.length/2+k*30;const lamp=new T.Mesh(new T.SphereGeometry(1.2,6,4),new T.MeshBasicMaterial({color:'#f0e5ba',transparent:true}));lamp.position.set(a.x,Math.max(terrain(a.x,z),a.elevation)+1,z);scene.add(lamp);world.nightLights.push(lamp);}const pole=block(a.x+a.width,a.elevation+7,a.z+a.length*.35,.4,14,.4,'#e5dabc');const sock=new T.Mesh(new T.ConeGeometry(1.5,7,8),mat('#d97b53'));sock.rotation.z=-Math.PI/2;sock.position.set(pole.position.x+3,pole.position.y+6,pole.position.z);scene.add(sock);world.socks.push(sock);}

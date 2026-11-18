@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {modernHelicopter} from './modern-helicopters.js?v=04.45';
+import {modernHelicopter} from './modern-helicopters.js?v=04.53';
 // Recognisable R22 Beta II and Bell 47G silhouettes, scaled to existing flight envelopes.
 export function helicopter(c){
  if(['h145','bell407'].includes(c.id))return modernHelicopter(c);

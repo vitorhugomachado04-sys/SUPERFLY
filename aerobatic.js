@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {cloudTexture} from './clouds.js?v=04.45';
+import {cloudTexture} from './clouds.js?v=04.53';
 export function aerobaticAircraft(){
  const g=new T.Group(),purple=new T.MeshStandardMaterial({color:'#813ee0',roughness:.35}),white=new T.MeshStandardMaterial({color:'#fff3de'}),dark=new T.MeshStandardMaterial({color:'#243144'});
  const add=(geo,mat,x,y,z,parent=g)=>{const m=new T.Mesh(geo,mat);m.position.set(x,y,z);parent.add(m);return m;};

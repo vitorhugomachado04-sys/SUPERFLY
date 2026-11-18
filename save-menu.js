@@ -1,5 +1,5 @@
-import {exportSave,parseSave,loadBackup,importProgress,describeSave,MAX_SAVE_BYTES} from './save-game.js?v=04.45';
-import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.45';
+import {exportSave,parseSave,loadBackup,importProgress,describeSave,MAX_SAVE_BYTES} from './save-game.js?v=04.53';
+import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.53';
 export class SaveMenu{
  constructor(career,onLoaded){
   this.career=career;this.onLoaded=onLoaded;this.root=document.getElementById('save-menu');this.pending=null;this.request=0;

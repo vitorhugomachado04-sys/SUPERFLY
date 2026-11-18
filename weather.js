@@ -1,6 +1,6 @@
-import {updateClouds} from './clouds.js?v=04.45';
+import {updateClouds} from './clouds.js?v=04.53';
 import * as T from './three.js';
-import {REGIONS} from './airports.js?v=04.45';
+import {REGIONS} from './airports.js?v=04.53';
 export const REGIONAL_WEATHER={aurora:'clear',winds:'coastal',metro:'partial',alpine:'overcast',peaks:'snow','aurora-snow':'blizzard',desert:'dust',ocean:'partial'};
 export const regionAt=(x,z)=>REGIONS.reduce((best,r)=>Math.hypot(x-r.x,z-r.z)<Math.hypot(x-best.x,z-best.z)?r:best).id;
 export const WEATHER={
@@ -48,13 +48,13 @@ export class WeatherView{
  this.overcast=new T.Mesh(new T.PlaneGeometry(18000,18000),new T.MeshBasicMaterial({color:'#78868d',transparent:true,opacity:0,side:T.DoubleSide,depthWrite:false}));this.overcast.rotation.x=-Math.PI/2;scene.add(this.overcast);
 
  }
- update(weather,f){const w=weather.current,t=weather.time,h=weather.hour;this.windUniforms.windTime.value=t;this.windUniforms.windStrength.value=w.wind+w.gust;const day=Math.max(0,Math.sin((h-6)/12*Math.PI)),twilight=day>0?Math.max(0,1-Math.abs(day-.12)*5):0;const sky=new T.Color('#101c38').lerp(new T.Color('#a6d6d9'),day).lerp(new T.Color('#b88a83'),twilight*.3).lerp(new T.Color('#657579'),w.cloud*.45).lerp(new T.Color('#bda27e'),w.dust*.6);this.scene.background.copy(sky);this.scene.fog.color.copy(sky);this.scene.fog.density=1.4/w.visibility;
+ update(weather,f){const w=weather.current,t=weather.time,h=weather.hour;this.windUniforms.windTime.value=t;this.windUniforms.windStrength.value=w.wind+w.gust;const day=Math.max(0,Math.sin((h-6)/12*Math.PI)),twilight=day>0?Math.max(0,1-Math.abs(day-.12)*5):0;const sky=new T.Color('#101c38').lerp(new T.Color('#a6d6d9'),day).lerp(new T.Color('#b88a83'),twilight*.3).lerp(new T.Color('#657579'),w.cloud*.45).lerp(new T.Color('#bda27e'),w.dust*.6);this.scene.background.copy(sky);this.scene.fog.color.copy(sky);this.scene.fog.density=1.4/(w.visibility+Math.max(0,f.y-3000)*5);if(f.y>5000){this.scene.background.lerp(new T.Color('#182d54'),Math.min(.65,(f.y-5000)/35000));this.scene.fog.color.copy(this.scene.background);}
  const sun=this.world.sun;sun.intensity=(.15+day*2.25)*(1-w.cloud*.65);sun.color.set(day<.25?'#ffc792':'#fff2ce');this.world.shadowOffset.set(Math.cos(h/24*Math.PI*2)*650,100+day*800,Math.sin(h/24*Math.PI*2)*500);this.world.ambient.intensity=.5+day*1.3;document.body.classList.toggle('night',day<.15);
  this.overcast.position.set(f.x,1900,f.z);this.overcast.material.opacity=Math.max(0,w.cloud-.6)*1.4;
  updateClouds(this.world.clouds,this.cloudOrigins,w,f,t,day,twilight);
  const intensity=Math.max(w.rain,w.snow,w.dust);this.particles.visible=intensity>.01;const a=this.particles.geometry.attributes.position;const wind=weather.sample(f.x,f.y,f.z,t);for(let i=0;i<a.count;i++){const p=i*3;a.array[p]=f.x+((this.positions[p]*240+t*wind.x)%240+240)%240-120;a.array[p+1]=f.y+((this.positions[p+1]*140-t*(w.rain>0?70:8))%140+140)%140-45;a.array[p+2]=f.z+((this.positions[p+2]*240+t*wind.z)%240+240)%240-120;}a.needsUpdate=true;this.particles.geometry.setDrawRange(0,Math.floor(a.count*intensity));this.particles.material.size=w.rain>0?.6:w.dust>0?2.5:1.2;this.particles.material.color.set(w.dust>0?'#ceb58f':'#e3edf2');
  const flash=w.lightning&&Math.sin(t*.73)>.998&&Math.sin(t*41)>.2; this.bolt.visible=!!flash;this.bolt.position.set(f.x+900,100,f.z-1500);if(flash){sun.intensity=5;this.scene.background.lerp(new T.Color('#e5edff'),.7);}
- this.stars.position.set(f.x,0,f.z);this.stars.material.opacity=(1-day)*(1-w.cloud);const polar=REGIONS.find(r=>r.id==='aurora-snow');this.aurora.position.set(polar.x,950,polar.z-3500);this.aurora.material.opacity=weather.region==='aurora-snow'?(1-day)*(1-w.cloud)*.32:0;const arr=this.aurora.geometry.attributes.position;for(let i=0;i<arr.count;i++){let p=i*3;arr.array[p+2]=Math.sin(this.baseAurora[p]*.004+t*.2)*180;arr.array[p+1]=this.baseAurora[p+1]+Math.sin(this.baseAurora[p]*.003+t*.3)*130;}arr.needsUpdate=true;
+ this.stars.position.set(f.x,Math.max(0,f.y-5000),f.z);this.stars.material.opacity=(1-day)*(1-w.cloud);const polar=REGIONS.find(r=>r.id==='aurora-snow');this.aurora.position.set(polar.x,950,polar.z-3500);this.aurora.material.opacity=weather.region==='aurora-snow'?(1-day)*(1-w.cloud)*.32:0;const arr=this.aurora.geometry.attributes.position;for(let i=0;i<arr.count;i++){let p=i*3;arr.array[p+2]=Math.sin(this.baseAurora[p]*.004+t*.2)*180;arr.array[p+1]=this.baseAurora[p+1]+Math.sin(this.baseAurora[p]*.003+t*.3)*130;}arr.needsUpdate=true;
  for(const light of this.world.nightLights||[])light.material.opacity=.3+(1-day)*.7;
  }
 }
