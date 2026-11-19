@@ -1,4 +1,4 @@
-import {legendFleet} from './legend-fleet.js?v=04.53';
+import {legendFleet} from './legend-fleet.js?v=04.55';
 // Arcade tuning, not certified performance data.
 const common={gravity:9.81,step:1/120,drag:.032,induced:.055,liftSlope:4.7,stallAngle:.29,pitchMin:-.35,pitchMax:.55,pitchResponse:.55,pitchDamping:3.2,pitchTrim:.05,neutralAssist:.85,overspeedStart:55,overspeedDrag:.0006,rollResponse:1.5,rollDamping:3.5,controlSpeed:26,thrustFalloff:115,groundSteering:.35,groundPitchRelax:1.4,maxSink:6.5,flapLift:.24,flapDrag:.026,retractable:false,gearSeconds:0,gearDrag:0,belly:.5,halfSpan:5,wingY:1.5,length:6.3,wheelTrack:1.1,wheelZ:.3,cameraDistance:18,cameraHeight:6,cabinY:1.05,cabinZ:1.6,rotationSpeed:25,approachSpeed:27,engine:'prop'};
 export const C152={...common,id:'cessna',name:'Cessna 152',short:'CESSNA',description:'Leve e dócil · Hélice · Trem fixo',mass:650,wing:16.2,thrust:2100,gear:1.18};

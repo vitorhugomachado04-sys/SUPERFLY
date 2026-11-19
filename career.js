@@ -1,5 +1,5 @@
-import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.53';
-import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.53';
+import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.55';
+import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.55';
 export {MISSIONS,MAIN_IDS,CATALOG};
 const KEY='superfly-career-v3',LEGACY='superfly-career-v2';
 const oldIds=['school','winds','fog','heli','birds','gear','storm','peaks','aurora','desert','jump','base','intercept','carrier'];

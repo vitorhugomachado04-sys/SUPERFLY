@@ -1,6 +1,6 @@
-import {PARKING_STANDS} from './airport-life.js?v=04.53';
+import {PARKING_STANDS} from './airport-life.js?v=04.55';
 import * as T from './three.js';
-import {terrain,coastRadius,groves} from './geography.js?v=04.53';
+import {terrain,coastRadius,groves} from './geography.js?v=04.55';
 export const AIRPORT={left:-36,right:195,near:-885,far:885};
 
 // Cut an exact opening for the airport: no terrain remains under its surface.

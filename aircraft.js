@@ -1,10 +1,10 @@
-import {legendAircraft} from './legend-aircraft.js?v=04.53';
-import {challengeAircraft,addFloats} from './challenge-aircraft.js?v=04.53';
-import {aerobaticAircraft} from './aerobatic.js?v=04.53';
-import{extraAircraft}from './extra-aircraft.js?v=04.53';
-import{jetAircraft}from './jets.js?v=04.53';
-import{C152}from './fleet.js?v=04.53';
-import * as T from './three.js';import{box,material}from './scene.js?v=04.53';
+import {legendAircraft} from './legend-aircraft.js?v=04.55';
+import {challengeAircraft,addFloats} from './challenge-aircraft.js?v=04.55';
+import {aerobaticAircraft} from './aerobatic.js?v=04.55';
+import{extraAircraft}from './extra-aircraft.js?v=04.55';
+import{jetAircraft}from './jets.js?v=04.55';
+import{C152}from './fleet.js?v=04.55';
+import * as T from './three.js';import{box,material}from './scene.js?v=04.55';
 function cessna(){let g=new T.Group();const white='#f4ecd8',purple='#6a659e';let body=new T.Mesh(new T.CylinderGeometry(.13,.64,5.6,7),material(white));body.rotation.x=Math.PI/2;body.position.set(0,.32,.3);g.add(body);box(g,0,.3,-2.25,1.25,.85,1.2,white);box(g,0,.38,-2.86,1.27,.18,.05,purple);let cabin=box(g,0,.95,-.6,1.32,1.14,1.6,'#477880');box(g,0,1.55,-.6,1.5,.14,1.9,white);box(g,0,.45,-.45,1.38,.26,2.1,purple);// Split the wing and painted tips into adjoining sections: overlapping undersides flickered.
  box(g,0,1.52,-.35,8.7,.17,1.5,white);for(let x of [-4.725,4.725])box(g,x,1.52,-.35,.75,.17,1.5,purple);
  function rod(a,b,r,col){let d=new T.Vector3().subVectors(b,a);let m=new T.Mesh(new T.CylinderGeometry(r,r,d.length(),6),material(col));m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());g.add(m);}

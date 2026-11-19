@@ -1,6 +1,6 @@
-import {MISSIONS,MAIN_IDS} from './mission-catalog.js?v=04.53';
-import {AIRPORTS} from './airports.js?v=04.53';
-import {FLEET} from './fleet.js?v=04.53';
+import {MISSIONS,MAIN_IDS} from './mission-catalog.js?v=04.55';
+import {AIRPORTS} from './airports.js?v=04.55';
+import {FLEET} from './fleet.js?v=04.55';
 export const SAVE_KEY='superfly-career-v3',BACKUP_KEY=SAVE_KEY+'-backup',MAX_SAVE_BYTES=1024*1024;
 const fail=()=>{throw new Error('Save inválido ou incompatível. O progresso atual foi mantido.');};
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);

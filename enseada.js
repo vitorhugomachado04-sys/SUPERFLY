@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.53';
+import {terrain} from './geography.js?v=04.55';
 export function addEnseada(scene,world){
  const mats=new Map(),geo=new T.BoxGeometry(1,1,1),ball=new T.IcosahedronGeometry(1,1),batches=new Map();
  function item(x,y,z,w,h,d,c,shape=geo){const key=c+shape.uuid;if(!batches.has(key))batches.set(key,{geo:shape,mat:new T.MeshStandardMaterial({color:c,roughness:.85}),items:[]});batches.get(key).items.push([x,y,z,w,h,d]);}

@@ -1,10 +1,10 @@
-import {atmosphere,machNumber} from './legend-fleet.js?v=04.53';
-import {stepArrestor} from './carrier.js?v=04.53';
-import {airportAt,surfaceHeight,spawnAt,airportById,helicopterDeparture} from './airports.js?v=04.53';
-import{terrain}from './geography.js?v=04.53';
-export{terrain}from './geography.js?v=04.53';
-import{C152}from './fleet.js?v=04.53';
-export{C152}from './fleet.js?v=04.53';
+import {atmosphere,machNumber} from './legend-fleet.js?v=04.55';
+import {stepArrestor} from './carrier.js?v=04.55';
+import {airportAt,surfaceHeight,spawnAt,airportById,helicopterDeparture} from './airports.js?v=04.55';
+import{terrain}from './geography.js?v=04.55';
+export{terrain}from './geography.js?v=04.55';
+import{C152}from './fleet.js?v=04.55';
+export{C152}from './fleet.js?v=04.55';
 export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const onRunway=(x,z)=>!!airportAt(x,z);
 export class Flight{

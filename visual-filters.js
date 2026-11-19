@@ -1,6 +1,6 @@
-import {VHSFilter} from './vhs.js?v=04.53';
-import {GameBoyFilter} from './gameboy.js?v=04.53';
-import {RetroFilters,NEW_FILTERS} from './retro-filters.js?v=04.53';
+import {VHSFilter} from './vhs.js?v=04.55';
+import {GameBoyFilter} from './gameboy.js?v=04.55';
+import {RetroFilters,NEW_FILTERS} from './retro-filters.js?v=04.55';
 export const FILTERS=[['off','ORIGINAL',''],['dmg','Game Boy DMG','RETRO GAMING'],['gbc','Game Boy Color','RETRO GAMING'],['virtualboy','Virtual Boy','RETRO GAMING'],['macintosh','Macintosh 1984','RETRO GAMING'],['vhs','VHS / CRT','ANALOG & CINEMA'],['film35','35mm Film','ANALOG & CINEMA'],['super8','Super 8','ANALOG & CINEMA'],['camcorder','Camcorder 2000','ANALOG & CINEMA'],['nightvision','Night Vision','EXPERIMENTAL'],['ascii','ASCII','EXPERIMENTAL'],['synthwave','Synthwave','EXPERIMENTAL']];
 const defaults=()=>({mode:'camcorder',intensity:1,asciiMode:'green',dither:true,interlace:false,cadence:false,overlay:false});
 export class VisualFilters{

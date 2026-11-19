@@ -1,39 +1,39 @@
-import {machNumber} from './legend-fleet.js?v=04.53';
-import {FilterMenu} from './filter-menu.js?v=04.53';
-import {SaveMenu} from './save-menu.js?v=04.53';
-import {missionPlan,approachPoints} from './flight-plan.js?v=04.53';
-import {VisualFilters} from './visual-filters.js?v=04.53';
-import {readCameraShake,saveCameraShake} from './preferences.js?v=04.53';
-import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.53';
-import {GamepadUI} from './gamepad-ui.js?v=04.53';
-import {ChallengeAdventures} from './challenge-adventures.js?v=04.53';
-import {LettermanCode,LettermanBanner} from './letterman.js?v=04.53';
-import {AerobaticSmoke} from './aerobatic.js?v=04.53';
-import {FighterWeapons,armedAircraft} from './weapons.js?v=04.53';
-import {CheatWord,ParachuteCheat,supportsParachute} from './parachute-cheat.js?v=04.53';
-import {buildYacht} from './yacht.js?v=04.53';
-import {Soundtrack} from './music.js?v=04.53';
-import {RocketChallenge} from './rocket-challenge.js?v=04.53';
-import {LANDING_CHALLENGES,LandingChallenge} from './landing-challenges.js?v=04.53';
+import {machNumber} from './legend-fleet.js?v=04.55';
+import {FilterMenu} from './filter-menu.js?v=04.55';
+import {SaveMenu} from './save-menu.js?v=04.55';
+import {missionPlan,approachPoints} from './flight-plan.js?v=04.55';
+import {VisualFilters} from './visual-filters.js?v=04.55';
+import {readCameraShake,saveCameraShake} from './preferences.js?v=04.55';
+import {navigatePadMenu,syncPadMenu} from './gamepad.js?v=04.55';
+import {GamepadUI} from './gamepad-ui.js?v=04.55';
+import {ChallengeAdventures} from './challenge-adventures.js?v=04.55';
+import {LettermanCode,LettermanBanner} from './letterman.js?v=04.55';
+import {AerobaticSmoke} from './aerobatic.js?v=04.55';
+import {FighterWeapons,armedAircraft} from './weapons.js?v=04.55';
+import {CheatWord,ParachuteCheat,supportsParachute} from './parachute-cheat.js?v=04.55';
+import {buildYacht} from './yacht.js?v=04.55';
+import {Soundtrack} from './music.js?v=04.55';
+import {RocketChallenge} from './rocket-challenge.js?v=04.55';
+import {LANDING_CHALLENGES,LandingChallenge} from './landing-challenges.js?v=04.55';
 import * as T from './three.js';
-import {FLEET,getAircraft,C152} from './fleet.js?v=04.53';
-import {Flight,terrain,onRunway} from './physics.js?v=04.53';
-import {buildWorld} from './scene.js?v=04.53';
-import {addRegions,updateRegionMotion} from './regions.js?v=04.53';
-import {AIRPORTS,REGIONS,airportById,nearestAirport,arrivalSpawn} from './airports.js?v=04.53';
-import {aircraft} from './aircraft.js?v=04.53';
-import {controls} from './controls.js?v=04.53';
-import {Sound} from './audio.js?v=04.53';
-import {FlightCamera,bindCamera,nextCameraMode} from './camera.js?v=04.53';
-import {LandingSmoke} from './effects.js?v=04.53';
-import {CrashEffect} from './crash.js?v=04.53';
-import {MenuFlight} from './menu-flight.js?v=04.53';
-import {Weather,WeatherView,WEATHER} from './weather.js?v=04.53';
-import {NavigationMap} from './navigation.js?v=04.53';
-import {Career,MISSIONS,CATALOG,MAIN_IDS} from './career.js?v=04.53';
-import {buildCarrier,carrierGuidance} from './carrier.js?v=04.53';
-import {WorldStreaming} from './streaming.js?v=04.53';
-import {SpecialMission} from './specials.js?v=04.53';
+import {FLEET,getAircraft,C152} from './fleet.js?v=04.55';
+import {Flight,terrain,onRunway} from './physics.js?v=04.55';
+import {buildWorld} from './scene.js?v=04.55';
+import {addRegions,updateRegionMotion} from './regions.js?v=04.55';
+import {AIRPORTS,REGIONS,airportById,nearestAirport,arrivalSpawn} from './airports.js?v=04.55';
+import {aircraft} from './aircraft.js?v=04.55';
+import {controls} from './controls.js?v=04.55';
+import {Sound} from './audio.js?v=04.55';
+import {FlightCamera,bindCamera,nextCameraMode} from './camera.js?v=04.55';
+import {LandingSmoke} from './effects.js?v=04.55';
+import {CrashEffect} from './crash.js?v=04.55';
+import {MenuFlight} from './menu-flight.js?v=04.55';
+import {Weather,WeatherView,WEATHER} from './weather.js?v=04.55';
+import {NavigationMap} from './navigation.js?v=04.55';
+import {Career,MISSIONS,CATALOG,MAIN_IDS} from './career.js?v=04.55';
+import {buildCarrier,carrierGuidance} from './carrier.js?v=04.55';
+import {WorldStreaming} from './streaming.js?v=04.55';
+import {SpecialMission} from './specials.js?v=04.55';
 const $=s=>document.getElementById(s),scene=new T.Scene(),renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,logarithmicDepthBuffer:true});
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=.85;
 const camera=new T.PerspectiveCamera(50,innerWidth/innerHeight,.15,80000),world=buildWorld(scene,renderer.capabilities.getMaxAnisotropy());world.windRotors=[];world.socks=[];addRegions(scene,world);const carrier=buildCarrier(scene,world),yacht=buildYacht(scene,world),streaming=new WorldStreaming(scene,scene.children.filter(o=>!world.clouds.includes(o)));
@@ -110,7 +110,7 @@ function refreshCareer(){const m=career.nextMission,started=career.hasStarted;$(
 function restoreCheckpoint(cp){if(!cp||flight.config.helicopter)return;Object.assign(flight,cp);flight.engineHealth=[...cp.engineHealth];flight.wind=weather;career.checkpoint=cp;if(cp.special){Object.assign(special,cp.special);if(special.done)special.target=null;}else{special.time=cp.specialTime??Math.max(0,cp.time-1);special.phase=cp.specialPhase||0;}flightCamera.reset();}
 function resumeCampaign(){const m=career.nextMission;if(!m){showBoard();return;}const cp=career.progress.resume?.id===m.id?career.progress.resume.checkpoint:null;startGame('career',MISSIONS.indexOf(m),career.progress.last);restoreCheckpoint(cp);if(cp)career.persistCheckpoint(special);}
 function showBoard(){home();$('career-board').hidden=false;$('board-status').textContent=career.nextMission?`Lia · Próxima partida: ${airportById(career.nextMission.from).name}. Extras são opcionais.`:'Lia · Viagem concluída. Volte aos destinos ou escolha uma extra.';$('board-resume').hidden=!career.nextMission;$('mission-cards').replaceChildren();
- for(const m of CATALOG){const card=document.createElement('article');card.className='mission-card'+(m.kind==='extra'?' extra':'')+(career.nextMission?.id===m.id?' next':'');const img=document.createElement('img');img.src=m.cover;img.alt=m.name;img.loading='lazy';const title=document.createElement('strong');title.textContent=(m.kind==='extra'?'EXTRA · ':'')+m.name;const detail=document.createElement('p');detail.textContent=`${m.aircraft?getAircraft(m.aircraft).name:'Aeronave em desenvolvimento'} · ${airportById(m.from).name} → ${airportById(m.to).name}`;const objective=document.createElement('p');objective.textContent=m.objectives[0];const status=document.createElement('small');const done=career.progress.completed.includes(m.id),available=career.available(m),rating=career.progress.ratings[MISSIONS.indexOf(m)];status.textContent=m.status==='planned'?'EM PREPARAÇÃO · '+m.reason:done?'CONCLUÍDA · '+(rating?.grade||''):available?'DISPONÍVEL':'BLOQUEADA · avance na campanha';const button=document.createElement('button');button.disabled=!available||m.status!=='playable';button.textContent=done?'REJOGAR →':m.kind==='extra'?'FAZER MISSÃO EXTRA →':'RETOMAR VIAGEM →';button.onclick=()=>{if(m.kind==='main'&&!done)resumeCampaign();else startGame('career',MISSIONS.indexOf(m));};card.append(img,title,detail,objective,status,button);$('mission-cards').append(card);}
+ for(const m of CATALOG){const card=document.createElement('article');card.className='mission-card'+(m.kind==='extra'?' extra':'')+(career.nextMission?.id===m.id?' next':'');const img=document.createElement('img');img.src=m.cover;img.alt=m.name;img.loading='lazy';const done=career.progress.completed.includes(m.id);img.className=done?'mission-cover completed':'mission-cover';img.title=done?'Missão concluída':'Missão ainda não concluída';const title=document.createElement('strong');title.textContent=(m.kind==='extra'?'EXTRA · ':'')+m.name;const detail=document.createElement('p');detail.textContent=`${m.aircraft?getAircraft(m.aircraft).name:'Aeronave em desenvolvimento'} · ${airportById(m.from).name} → ${airportById(m.to).name}`;const objective=document.createElement('p');objective.textContent=m.objectives[0];const status=document.createElement('small');const available=career.available(m),rating=career.progress.ratings[MISSIONS.indexOf(m)];status.textContent=m.status==='planned'?'EM PREPARAÇÃO · '+m.reason:done?'CONCLUÍDA · '+(rating?.grade||''):available?'DISPONÍVEL':'BLOQUEADA · avance na campanha';const button=document.createElement('button');button.disabled=!available||m.status!=='playable';button.textContent=done?'REJOGAR →':m.kind==='extra'?'FAZER MISSÃO EXTRA →':'RETOMAR VIAGEM →';button.onclick=()=>{if(m.kind==='main'&&!done)resumeCampaign();else startGame('career',MISSIONS.indexOf(m));};card.append(img,title,detail,objective,status,button);$('mission-cards').append(card);}
 }
 function arrivalOptions(){const airport=career.sideTrip?career.progress.last?.airport:career.mission.to;const list=career.extrasAt(airport);$('arrival-extras').hidden=!list.length;for(const m of list){const b=document.createElement('button');b.textContent=`FAZER MISSÃO EXTRA · ${m.name}`;b.onclick=()=>startGame('career',MISSIONS.indexOf(m));$('arrival-extras').append(b);}$('next-mission').textContent=list.length?'SEGUIR VIAGEM →':'CONTINUAR VIAGEM →';}
 $('board-close').onclick=()=>$('career-board').hidden=true;$('board-resume').onclick=resumeCampaign;$('career-board-button').onclick=showBoard;$('campaign-return').onclick=resumeCampaign;

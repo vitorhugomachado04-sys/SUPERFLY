@@ -1,6 +1,6 @@
 import * as T from './three.js';
-import {REGIONS} from './airports.js?v=04.53';
-import {terrain,coastRadius,regionRadius} from './geography.js?v=04.53';
+import {REGIONS} from './airports.js?v=04.55';
+import {terrain,coastRadius,regionRadius} from './geography.js?v=04.55';
 export function addCoastalLife(scene,world){
  const moving=[],surfers=[],waves=[],materials=new Map(),cube=new T.BoxGeometry(1,1,1),clock={time:0};
  const mat=c=>{if(!materials.has(c))materials.set(c,new T.MeshStandardMaterial({color:c,roughness:.65}));return materials.get(c);};

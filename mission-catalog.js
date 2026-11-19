@@ -30,7 +30,8 @@ export const MAIN_IDS=main.map(m=>m[0]);
 const make=(row,extra=false,index=0)=>{const [id,name,from,to,aircraft,weather,hour,special,objective,dep]=row;return{id,name,from,to,aircraft,weather,hour,special,kind:extra?'extra':'main',dependencies:extra?[dep]:index?[main[index-1][0]]:[],objectives:[objective],completion:{type:'landing',airport:to,maxGroundSpeed:2,holdSeconds:2,requiresSpecial:!!special,requiresCable:to==='carrier'},cover:`./${id}.jpg`,status:'playable',radio:`Lia · Operações Panorama: ${objective}`};};
 export const MISSIONS=[...main.map((r,i)=>make(r,false,i)),...extras.map(r=>make(r,true))];
 const pioneer=MISSIONS.find(m=>m.id==='14bis');pioneer.completion.maxGroundSpeed=18;pioneer.completion.holdSeconds=.12;
-for(const m of MISSIONS.filter(m=>['14bis','beluga-delivery','supersonic-run','blackbird-recon'].includes(m.id)))m.cover=`./${m.id}.svg`;
+for(const m of MISSIONS.filter(m=>['beluga-delivery','supersonic-run','blackbird-recon'].includes(m.id)))m.cover=`./${m.id}.svg`;
+MISSIONS.find(m=>m.id==='14bis').cover='./14bis.png';
 const pending=[
  ['levee','Pouso no dique','fog','boeing','city','city','Dique com superfície de pouso e cenário próprio.'],
  ['raceway','A antiga pista de corrida','desert','boeing','base','base','Autódromo convertido em pista, com aproximação e obstáculos.'],
