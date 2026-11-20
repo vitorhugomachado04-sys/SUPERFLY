@@ -1,6 +1,7 @@
-import {MISSIONS,MAIN_IDS} from './mission-catalog.js?v=04.55';
-import {AIRPORTS} from './airports.js?v=04.55';
-import {FLEET} from './fleet.js?v=04.55';
+import {LANDING_CHALLENGES} from './landing-challenges.js?v=04.56';
+import {MISSIONS,MAIN_IDS} from './mission-catalog.js?v=04.56';
+import {AIRPORTS} from './airports.js?v=04.56';
+import {FLEET} from './fleet.js?v=04.56';
 export const SAVE_KEY='superfly-career-v3',BACKUP_KEY=SAVE_KEY+'-backup',MAX_SAVE_BYTES=1024*1024;
 const fail=()=>{throw new Error('Save inválido ou incompatível. O progresso atual foi mantido.');};
 const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -24,11 +25,12 @@ function checkpoint(c){
 export function validateProgress(p){
  if(!object(p)||p.version!==3||p.mapVersion!==2)fail();
  const completed=strings(p.completed);if(completed.some(id=>!MISSIONS.some(m=>m.id===id)))fail();
+ const challengeCompleted=strings(p.challengeCompleted??[]);if(challengeCompleted.some(id=>!LANDING_CHALLENGES.some(c=>c.id===id)))fail();
  const next=MAIN_IDS.findIndex(id=>!completed.includes(id));
  const unlocked=strings(p.unlocked).filter(id=>FLEET.some(c=>c.id===id));if(!unlocked.includes('cessna'))unlocked.unshift('cessna');
  if(!Array.isArray(p.ratings)||p.ratings.length>100)fail();const ratings=[];
  for(const r of p.ratings){if(r==null)continue;if(!object(r))fail();const index=MISSIONS.findIndex(m=>m.id===r.mission);if(index<0||!['OURO','BOM POUSO','CONCLUÍDA'].includes(r.grade))fail();ratings[index]={mission:r.mission,sink:number(r.sink),alignment:number(r.alignment),grade:r.grade};}
- const out={version:3,mapVersion:2,next:next<0?MAIN_IDS.length:next,completed,unlocked,ratings,started:bool(p.started),last:null,resume:null};
+ const out={version:3,mapVersion:2,next:next<0?MAIN_IDS.length:next,completed,challengeCompleted,unlocked,ratings,started:bool(p.started),last:null,resume:null};
  if(p.savedAt!=null)out.savedAt=date(p.savedAt);
  if(p.last!=null){if(!object(p.last)||!AIRPORTS.some(a=>a.id===p.last.airport))fail();out.last={airport:p.last.airport};for(const k of ['x','z','heading'])out.last[k]=number(p.last[k]);}
  if(p.resume!=null){if(!object(p.resume)||p.resume.id!==MAIN_IDS[out.next])fail();out.resume={id:p.resume.id,checkpoint:checkpoint(p.resume.checkpoint)};if(out.resume.id==='school'&&(out.resume.checkpoint?.special?.phase??0)>4)fail();}

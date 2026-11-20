@@ -181,3 +181,14 @@ body.glider-flight .instruments .power,body.glider-flight #touch .throttle{displ
 body[data-filter]:not([data-filter="off"])>.grain{display:none}
 
 #legend-intro{position:fixed;top:32%;left:50%;transform:translateX(-50%);width:min(480px,80vw);padding:22px 28px;background:#192d34df;border-top:2px solid #b6a4eb;text-align:center;pointer-events:none;z-index:3}#legend-intro small{letter-spacing:3px;color:#b6a4eb;font-size:9px}#legend-intro strong{display:block;font:600 42px "Barlow Condensed",sans-serif;margin:8px}#legend-intro p{line-height:1.7;font-size:13px}body.filter-editing #legend-intro{visibility:hidden}
+
+/* Shared mission boards: category colour and completion are readable at a glance. */
+#challenge-settings{position:fixed;inset:4vh 4vw;z-index:80;padding:28px;background:#172d32f5;border:1px solid #ffffff50;box-sizing:border-box;box-shadow:0 12px 50px #0005}
+#challenge-settings h2{font-size:28px;margin:8px 0}
+#challenge-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px}
+#challenge-settings button{cursor:pointer;padding:12px;border:1px solid #ffffff50;background:#ffffff10;color:white}
+.mission-card.main-mission{border-top:3px solid #91c99c}
+.mission-card.extra{border-top:3px solid #b6a4eb}
+.mission-card.landing-card{border-top:3px solid #81bdcf}
+.mission-card>button{margin-top:auto}
+#challenge-settings button:hover,#challenge-settings button:focus-visible{background:#314c59;color:#fff}

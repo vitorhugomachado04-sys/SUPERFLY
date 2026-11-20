@@ -1,5 +1,5 @@
-import {WIND_FARMS,windAmenityReserved,windFarmReserved,windTurbineReserved} from './winds-layout.js?v=04.55';
-import {regionRadius} from './geography.js?v=04.55';
+import {WIND_FARMS,windAmenityReserved,windFarmReserved,windTurbineReserved} from './winds-layout.js?v=04.56';
+import {regionRadius} from './geography.js?v=04.56';
 // Small settlements follow the relief; foundations prevent floating hillside houses.
 export function addVillages({r,item,ground,obstacle,clear,rand,world}){
  if(!['winds','alpine','peaks','aurora-snow'].includes(r.id))return;

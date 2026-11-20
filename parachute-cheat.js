@@ -1,6 +1,6 @@
-import {topCamera} from './top-camera.js?v=04.55';
+import {topCamera} from './top-camera.js?v=04.56';
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.55';
+import {terrain} from './geography.js?v=04.56';
 export const supportsParachute=config=>config.parachutists??(config.id==='skycourier'||!!config.helicopter);
 export class CheatWord{
  constructor(word='parachute'){this.word=word;this.reset();}

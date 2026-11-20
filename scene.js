@@ -1,11 +1,11 @@
-import {addEnseada} from './enseada.js?v=04.55';
-import {CIRCUIT_POINTS,flightGate,orientGate} from './flight-plan.js?v=04.55';
-import {addClouds} from './clouds.js?v=04.55';
-import {addControlTower} from './control-tower.js?v=04.55';
-import {addAirportLife} from './airport-life.js?v=04.55';
-import * as T from './three.js';import{terrain}from './physics.js?v=04.55';import{islandGeometry,airportSurface,landTexture}from './airport.js?v=04.55';
-import{eastCoast}from './geography.js?v=04.55';
-import{addScenery}from './scenery.js?v=04.55';
+import {addEnseada} from './enseada.js?v=04.56';
+import {CIRCUIT_POINTS,flightGate,orientGate} from './flight-plan.js?v=04.56';
+import {addClouds} from './clouds.js?v=04.56';
+import {addControlTower} from './control-tower.js?v=04.56';
+import {addAirportLife} from './airport-life.js?v=04.56';
+import * as T from './three.js';import{terrain}from './physics.js?v=04.56';import{islandGeometry,airportSurface,landTexture}from './airport.js?v=04.56';
+import{eastCoast}from './geography.js?v=04.56';
+import{addScenery}from './scenery.js?v=04.56';
 export const material=(color)=>new T.MeshStandardMaterial({color,flatShading:true,roughness:.85});
 export function box(parent,x,y,z,w,h,d,color){let m=new T.Mesh(new T.BoxGeometry(w,h,d),material(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 export function buildWorld(scene,anisotropy=1){const obstacles=[],clouds=[];scene.background=new T.Color('#a6d6d9');scene.fog=new T.FogExp2('#b1d8d6',.00012);scene.add(new T.HemisphereLight('#f9f2d1','#648784',1.8));let sun=new T.DirectionalLight('#fff2ce',2.4);sun.position.set(-400,800,300);sun.castShadow=true;

@@ -1,7 +1,7 @@
 import * as T from './three.js';
-import {airportById,runwayLocal,airportAt} from './airports.js?v=04.55';
-import {machNumber} from './legend-fleet.js?v=04.55';
-import {flightGate,orientGate} from './flight-plan.js?v=04.55';
+import {airportById,runwayLocal,airportAt} from './airports.js?v=04.56';
+import {machNumber} from './legend-fleet.js?v=04.56';
+import {flightGate,orientGate} from './flight-plan.js?v=04.56';
 export const LEGEND_MISSIONS=['historic','delivery','supersonic','recon'];
 export class LegendMission{
  constructor(m,group){this.kind=m.special;this.origin=airportById(m.from);this.airport=airportById(m.to);this.phase=0;this.done=false;this.time=0;this.hold=0;this.distance=0;this.message='';this.actionLabel='';this.target=null;this.points=null;this.group=group;this.previous=null;this.inFlight=false;this.photographed=false;if(group){const start=group.children.length;this.build();this.objects=group.children.slice(start);}}

@@ -1,5 +1,5 @@
 import * as T from './three.js';
-import {terrain} from './geography.js?v=04.55';
+import {terrain} from './geography.js?v=04.56';
 // One architectural family, sized for the airport; all aprons follow the ground.
 export function addControlTower(scene,obstacles,a){
  const metro=a.id==='city',school=a.id==='school',x=a.x+(school?100:-110),z=a.z+(school?-30:80),y=terrain(x,z,false),height=metro?56:school?29:25,radius=metro?13:9;

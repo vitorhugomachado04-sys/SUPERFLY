@@ -1,4 +1,4 @@
-import {padLabels} from './gamepad.js?v=04.55';
+import {padLabels} from './gamepad.js?v=04.56';
 export class GamepadUI{
  constructor(){this.sources=new WeakMap();this.root=document.createElement('aside');this.root.id='gamepad-help';this.root.setAttribute('aria-label','Comandos do controle');document.body.append(this.root);this.last='';}
  update(pad,menu=false){

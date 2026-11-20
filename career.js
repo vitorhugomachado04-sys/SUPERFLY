@@ -1,9 +1,9 @@
-import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.55';
-import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.55';
+import {airportById,airportAt,arrivalSpawn,runwayLocal} from './airports.js?v=04.56';
+import {MISSIONS,MAIN_IDS,CATALOG} from './mission-catalog.js?v=04.56';
 export {MISSIONS,MAIN_IDS,CATALOG};
 const KEY='superfly-career-v3',LEGACY='superfly-career-v2';
 const oldIds=['school','winds','fog','heli','birds','gear','storm','peaks','aurora','desert','jump','base','intercept','carrier'];
-const fresh=()=>({version:3,next:0,unlocked:['cessna'],ratings:[],completed:[],last:null,started:false,mapVersion:2,resume:null});
+const fresh=()=>({version:3,next:0,unlocked:['cessna'],ratings:[],completed:[],challengeCompleted:[],last:null,started:false,mapVersion:2,resume:null});
 export class Career{
  constructor(storage=globalThis.localStorage){this.storage=storage;this.progress=fresh();try{const p=JSON.parse(storage?.getItem(KEY)||'null');if(p?.version===3&&Array.isArray(p.completed)){this.progress={...fresh(),...p};}else{const old=JSON.parse(storage?.getItem(LEGACY)||'null');if(old){this.progress.started=!!old.started||old.next>0;for(let i=0;i<oldIds.length;i++)if(old.ratings?.[i]||i<old.next){const id=oldIds[i],index=MISSIONS.findIndex(m=>m.id===id);if(index>=0){this.progress.completed.push(id);if(old.ratings?.[i])this.progress.ratings[index]=old.ratings[i];}}this.progress.unlocked=old.unlocked||['cessna'];}}}catch{}this.sync();this.active=false;}
  sync(){const next=MAIN_IDS.findIndex(id=>!this.progress.completed.includes(id));this.progress.next=next<0?MAIN_IDS.length:next;if(!this.progress.last&&this.progress.next>0){const previous=MISSIONS[this.progress.next-1],a=airportById(previous.to);this.progress.last={airport:a.id,x:a.x,z:a.z,heading:a.heading};}}
